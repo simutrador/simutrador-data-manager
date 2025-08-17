@@ -18,7 +18,7 @@ import pandas as pd
 from simutrador_core.models.asset_types import AssetType, get_resampling_offset
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
-from ...core.timeframe_utils import (
+from core.timeframe_utils import (
     get_pandas_frequency,
     get_resampling_rules,
     validate_timeframe_conversion,

@@ -9,7 +9,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import List, Tuple
 
-from ..core.settings import get_settings
+from core.settings import get_settings
 
 logger = logging.getLogger(__name__)
 

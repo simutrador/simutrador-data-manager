@@ -12,7 +12,7 @@ from typing import Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..models.nightly_update_api import (
+from models.nightly_update_api import (
     AnalysisPeriod,
     DataCompletenessRequest,
     DataCompletenessResponse,
@@ -21,7 +21,7 @@ from ..models.nightly_update_api import (
     SymbolCompletenessRawData,
     ValidationResultModel,
 )
-from ..services.validation.stock_market_validation_service import (
+from services.validation.stock_market_validation_service import (
     StockMarketValidationService,
 )
 

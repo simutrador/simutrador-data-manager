@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from simutrador_core.models.asset_types import AssetType
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
+
 from services.classification.asset_classification_service import (
     AssetClassificationService,
 )

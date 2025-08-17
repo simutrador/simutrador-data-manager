@@ -24,7 +24,7 @@ from services.workflows.stock_market_nightly_update_service import (
     StockMarketNightlyUpdateService,
 )
 
-from ..models.nightly_update_api import (
+from models.nightly_update_api import (
     ActiveUpdateInfo,
     ActiveUpdateSummary,
     NightlyUpdateRequest,

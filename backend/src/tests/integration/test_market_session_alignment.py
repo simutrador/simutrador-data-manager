@@ -20,6 +20,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
+
 from services.storage.data_resampling_service import DataResamplingService
 from services.storage.data_storage_service import DataStorageService
 

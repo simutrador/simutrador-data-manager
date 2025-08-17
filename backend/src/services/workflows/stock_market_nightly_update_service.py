@@ -15,8 +15,8 @@ from typing import Callable, Dict, List, Optional, override
 
 from simutrador_core.models.price_data import DataUpdateStatus, Timeframe
 
-from ...core.settings import get_settings
-from ...models.nightly_update_api import (
+from core.settings import get_settings
+from models.nightly_update_api import (
     NightlyUpdateRequest,
     NightlyUpdateResponse,
     NightlyUpdateSummary,

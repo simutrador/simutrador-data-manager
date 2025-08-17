@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional, TypedDict, cast, override
 import httpx
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
-from ...core.settings import get_settings
+from core.settings import get_settings
 from .data_provider_interface import (
     AuthenticationError,
     DataProviderError,

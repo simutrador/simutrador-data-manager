@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
-from ...core.settings import get_settings
+from core.settings import get_settings
 
 logger = logging.getLogger(__name__)
 

@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Optional, override
 
 from simutrador_core.models.price_data import Timeframe
 
-from ...core.settings import get_settings
+from core.settings import get_settings
 from ..storage.data_resampling_service import (
     DataResamplingError,
     DataResamplingService,

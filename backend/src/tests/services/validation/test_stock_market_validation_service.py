@@ -14,8 +14,8 @@ from typing import List
 from unittest.mock import Mock, patch
 
 import pytest
-
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
+
 from services.validation.stock_market_validation_service import (
     StockMarketValidationService,
     ValidationResult,

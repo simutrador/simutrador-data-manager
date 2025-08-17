@@ -4,7 +4,7 @@ Trading Simulation API endpoints.
 
 from fastapi import APIRouter, HTTPException, status
 
-from ..models import (
+from models import (
     ErrorResponse,
     SimulationMetrics,
     SimulationRequest,

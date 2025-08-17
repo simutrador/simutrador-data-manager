@@ -45,7 +45,7 @@ except ImportError:
 
 from simutrador_core.models.price_data import PriceCandle, Timeframe
 
-from ...core.settings import get_settings
+from core.settings import get_settings
 from ..polygon_url_generator import PolygonUrlGenerator
 from ..storage.data_storage_service import DataStorageService
 
