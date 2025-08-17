@@ -51,3 +51,11 @@ pythonpath = ["src"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+addopts = ["-v", "--tb=short", "-m", "not paid_api"]
+asyncio_mode = "auto"
+markers = [
+    "paid_api: marks tests that use real external APIs and incur charges (run with pytest -m paid_api)",
+    "e2e: marks tests as end-to-end tests",
+    "slow: marks tests as slow running",
+    "integration: marks tests as integration tests",
+]

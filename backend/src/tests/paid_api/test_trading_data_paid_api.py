@@ -134,7 +134,7 @@ class TestNightlyUpdatePaidAPI:
         if aapl_result["success"]:
             # If successful, we should have some data
             assert (
-                aapl_result["records_updated"] > 0
+                aapl_result["candles_updated"] > 0
             ), "Successful update should have records"
             assert (
                 aapl_result["start_date"] is not None

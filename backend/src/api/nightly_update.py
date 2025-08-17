@@ -118,10 +118,19 @@ async def start_nightly_update(
             _completed_updates,
         )
 
+        # Compose message mentioning symbol(s) to satisfy tests and improve clarity
+        if len(symbols) == 1:
+            msg = f"Nightly update started for symbol {symbols[0]}"
+        else:
+            preview = ", ".join(symbols[:3])
+            if len(symbols) > 3:
+                preview += ", ..."
+            msg = f"Nightly update started for {len(symbols)} symbols: {preview}"
+
         return {
             "request_id": request_id,
             "status": "started",
-            "message": f"Nightly update started for {len(symbols)} symbols",
+            "message": msg,
         }
 
     except Exception as e:

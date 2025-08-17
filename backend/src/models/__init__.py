@@ -12,8 +12,8 @@ from .price_data import (
     PriceCandle,
     PriceDataSeries,
     PriceQuote,
-    Timeframe,
 )
+from .price_data import Timeframe
 from .responses import ErrorResponse, SimulationMetrics, SimulationResponse, Trade
 
 __all__ = [
