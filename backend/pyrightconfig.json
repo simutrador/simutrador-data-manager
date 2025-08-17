@@ -1,0 +1,43 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "include": ["src"],
+  "exclude": [
+    "**/__pycache__",
+    "**/.venv",
+    "**/migrations",
+    "**/tests/**/fixtures",
+    "**/build",
+    "**/dist"
+  ],
+  "pythonVersion": "3.13",
+  "pythonPlatform": "All",
+  "typeCheckingMode": "strict",
+  "executionEnvironments": [
+    {
+      "root": "src"
+    },
+    {
+      "root": "src/tests",
+      "reportPrivateUsage": "none"
+    }
+  ],
+  "reportMissingTypeStubs": "none",
+  "reportUnknownMemberType": "warning",
+  "reportUnknownArgumentType": "warning",
+  "reportMissingParameterType": "warning",
+  "reportUnknownLambdaType": "none",
+  "reportPrivateImportUsage": "warning",
+  "reportImportCycles": "error",
+  "reportUnusedImport": "error",
+  "reportUnusedVariable": "error",
+  "reportIncompatibleVariableOverride": "error",
+  "reportIncompatibleMethodOverride": "error",
+  "reportUninitializedInstanceVariable": "error",
+  "reportCallIssue": "error",
+  "reportReturnType": "error",
+  "reportAssignmentType": "error",
+  "reportGeneralTypeIssues": "error",
+  "reportImplicitOverride": "warning",
+  "reportUntypedFunctionDecorator": "warning"
+}

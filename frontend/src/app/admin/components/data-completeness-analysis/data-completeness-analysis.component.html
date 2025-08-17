@@ -1,0 +1,650 @@
+<!-- Data Completeness Analysis Content -->
+<div class="p-4">
+  <!-- Analysis Form -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium">Symbols</span>
+      </label>
+      <input
+        type="text"
+        class="input input-bordered input-sm"
+        placeholder="AAPL, MSFT, GOOGL"
+        (input)="onCompletenessSymbolsChange($event)"
+      />
+      <div class="label">
+        <span class="text-xs text-base-content/70"
+          >Enter comma-separated symbols</span
+        >
+      </div>
+    </div>
+
+    <div class="form-control">
+      <label class="label cursor-pointer justify-start gap-3">
+        <input
+          type="checkbox"
+          class="checkbox checkbox-sm"
+          [(ngModel)]="completenessRequest.include_details"
+        />
+        <span class="label-text">Include details</span>
+      </label>
+      <div class="text-sm text-gray-500 ml-8">
+        Show detailed validation results
+      </div>
+    </div>
+  </div>
+
+  <!-- Gap Filling Options -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div class="form-control">
+      <label class="label cursor-pointer justify-start gap-3">
+        <input
+          type="checkbox"
+          class="checkbox checkbox-sm"
+          [(ngModel)]="completenessRequest.auto_fill_gaps"
+        />
+        <span class="label-text">🔧 Auto-fill gaps</span>
+      </label>
+      <div class="text-sm text-gray-500 ml-8">
+        Automatically attempt to recover missing data
+      </div>
+    </div>
+
+    <div class="form-control" *ngIf="completenessRequest.auto_fill_gaps">
+      <label class="label">
+        <span class="label-text">Max gap fill attempts</span>
+      </label>
+      <input
+        type="number"
+        class="input input-bordered input-sm"
+        min="1"
+        max="100"
+        [(ngModel)]="completenessRequest.max_gap_fill_attempts"
+        placeholder="50"
+      />
+      <div class="label">
+        <span class="text-xs text-base-content/70"
+          >Limit API calls for gap filling</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Date Range -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium">Start Date</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered input-sm"
+        [(ngModel)]="completenessRequest.start_date"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium">End Date</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered input-sm"
+        [(ngModel)]="completenessRequest.end_date"
+      />
+    </div>
+  </div>
+
+  <button
+    class="btn btn-secondary btn-sm"
+    [class.loading]="isLoadingCompleteness"
+    [disabled]="isLoadingCompleteness || !completenessRequest.symbols.length"
+    (click)="analyzeDataCompleteness()"
+  >
+    <span *ngIf="!isLoadingCompleteness">
+      {{
+        completenessRequest.auto_fill_gaps
+          ? "🔧 Analyze & Fill Gaps"
+          : "🔍 Analyze"
+      }}
+    </span>
+    <span *ngIf="isLoadingCompleteness">
+      {{
+        completenessRequest.auto_fill_gaps
+          ? "Analyzing & Filling Gaps..."
+          : "Analyzing..."
+      }}
+    </span>
+  </button>
+
+  <!-- Analysis Results -->
+  <div class="mt-4" *ngIf="completenessResult">
+    <!-- Overall Status Alert -->
+    <div
+      class="alert alert-success"
+      *ngIf="
+        completenessResult.overall_statistics.overall_completeness_percentage >=
+        95
+      "
+    >
+      <span
+        >✅ Data completeness:
+        {{
+          completenessResult.overall_statistics.overall_completeness_percentage
+        }}%</span
+      >
+    </div>
+    <div
+      class="alert alert-warning"
+      *ngIf="
+        completenessResult.overall_statistics.overall_completeness_percentage <
+          95 &&
+        completenessResult.overall_statistics.overall_completeness_percentage >=
+          80
+      "
+    >
+      <span
+        >⚠️ Data completeness:
+        {{
+          completenessResult.overall_statistics.overall_completeness_percentage
+        }}%</span
+      >
+    </div>
+    <div
+      class="alert alert-error"
+      *ngIf="
+        completenessResult.overall_statistics.overall_completeness_percentage <
+        80
+      "
+    >
+      <span
+        >❌ Data completeness:
+        {{
+          completenessResult.overall_statistics.overall_completeness_percentage
+        }}%</span
+      >
+    </div>
+
+    <!-- Overall Statistics -->
+    <div class="stats stats-vertical lg:stats-horizontal shadow mt-4">
+      <div class="stat bg-base-200 rounded-lg p-4">
+        <div class="stat-title text-xs">Total Symbols</div>
+        <div class="stat-value text-lg">
+          {{ completenessResult.overall_statistics.total_symbols }}
+        </div>
+      </div>
+      <div class="stat bg-base-200 rounded-lg p-4">
+        <div class="stat-title text-xs">Trading Days</div>
+        <div class="stat-value text-lg">
+          {{ completenessResult.overall_statistics.total_trading_days }}
+        </div>
+        <div class="stat-desc text-xs">
+          {{ completenessResult.overall_statistics.total_valid_days }}
+          valid
+        </div>
+      </div>
+      <div class="stat bg-base-200 rounded-lg p-4">
+        <div class="stat-title text-xs">Expected Candles</div>
+        <div class="stat-value text-lg">
+          {{
+            completenessResult.overall_statistics.total_expected_candles
+              | number
+          }}
+        </div>
+      </div>
+      <div class="stat bg-base-200 rounded-lg p-4">
+        <div class="stat-title text-xs">Missing Candles</div>
+        <div class="stat-value text-lg text-error">
+          {{
+            completenessResult.overall_statistics.total_missing_candles | number
+          }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Gap Filling Statistics (if enabled) -->
+    <div class="mt-4" *ngIf="hasGapFillingResults()">
+      <h5 class="font-semibold mb-3">🔧 Gap Filling Results</h5>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="stat-title text-xs text-blue-600">Total Gaps Found</div>
+          <div class="stat-value text-lg text-blue-700">
+            {{ getTotalGapsFound() }}
+          </div>
+        </div>
+        <div class="stat bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="stat-title text-xs text-green-600">Gaps Filled</div>
+          <div class="stat-value text-lg text-green-700">
+            {{ getGapsFilledSuccessfully() }}
+          </div>
+        </div>
+        <div class="stat bg-orange-50 border border-orange-200 rounded-lg p-4">
+          <div class="stat-title text-xs text-orange-600">
+            Vendor Unavailable
+          </div>
+          <div class="stat-value text-lg text-orange-700">
+            {{ getGapsVendorUnavailable() }}
+          </div>
+        </div>
+        <div class="stat bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <div class="stat-title text-xs text-purple-600">
+            Candles Recovered
+          </div>
+          <div class="stat-value text-lg text-purple-700">
+            {{ getCandlesRecovered() }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-Symbol Analysis -->
+    <div
+      class="mt-6"
+      *ngIf="Object.keys(completenessResult.symbol_completeness).length > 0"
+    >
+      <h5 class="font-semibold mb-3">📊 Per-Symbol Analysis</h5>
+      <div class="space-y-3">
+        <div
+          *ngFor="
+            let symbol of Object.keys(completenessResult.symbol_completeness)
+          "
+          class="card bg-base-100 border border-base-300 p-4"
+        >
+          <div class="flex justify-between items-center mb-2">
+            <h6 class="font-semibold">{{ symbol }}</h6>
+            <div
+              class="badge"
+              [class.badge-success]="
+                completenessResult.symbol_completeness[symbol]
+                  .completeness_percentage >= 95
+              "
+              [class.badge-warning]="
+                completenessResult.symbol_completeness[symbol]
+                  .completeness_percentage >= 80 &&
+                completenessResult.symbol_completeness[symbol]
+                  .completeness_percentage < 95
+              "
+              [class.badge-error]="
+                completenessResult.symbol_completeness[symbol]
+                  .completeness_percentage < 80
+              "
+            >
+              {{
+                completenessResult.symbol_completeness[symbol]
+                  .completeness_percentage
+              }}%
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+            <div>
+              <span class="text-base-content/70">Trading Days:</span>
+              <span class="font-medium ml-1">{{
+                completenessResult.symbol_completeness[symbol]
+                  .total_trading_days
+              }}</span>
+            </div>
+            <div>
+              <span class="text-base-content/70">Valid Days:</span>
+              <span class="font-medium ml-1 text-success">{{
+                completenessResult.symbol_completeness[symbol].valid_days
+              }}</span>
+            </div>
+            <div>
+              <span class="text-base-content/70">Expected:</span>
+              <span class="font-medium ml-1">{{
+                completenessResult.symbol_completeness[symbol]
+                  .total_expected_candles | number
+              }}</span>
+            </div>
+            <div>
+              <span class="text-base-content/70">Missing:</span>
+              <span class="font-medium ml-1 text-error">{{
+                completenessResult.symbol_completeness[symbol].missing_candles
+                  | number
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Enhanced metrics (if available) -->
+          <div
+            class="mt-3 pt-3 border-t border-base-300"
+            *ngIf="
+              completenessResult.symbol_completeness[symbol].full_days_count !==
+              undefined
+            "
+          >
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+              <div>
+                <span class="text-base-content/70">Full Days:</span>
+                <span class="font-medium ml-1">{{
+                  completenessResult.symbol_completeness[symbol].full_days_count
+                }}</span>
+              </div>
+              <div>
+                <span class="text-base-content/70">Half Days:</span>
+                <span class="font-medium ml-1">{{
+                  completenessResult.symbol_completeness[symbol].half_days_count
+                }}</span>
+              </div>
+              <div>
+                <span class="text-base-content/70">Days w/ Gaps:</span>
+                <span class="font-medium ml-1 text-warning">{{
+                  completenessResult.symbol_completeness[symbol].days_with_gaps
+                }}</span>
+              </div>
+              <div>
+                <span class="text-base-content/70">Avg Daily:</span>
+                <span class="font-medium ml-1"
+                  >{{
+                    completenessResult.symbol_completeness[symbol]
+                      .average_daily_completeness
+                  }}%</span
+                >
+              </div>
+              <div>
+                <span class="text-base-content/70">Worst Day:</span>
+                <span class="font-medium ml-1 text-error"
+                  >{{
+                    completenessResult.symbol_completeness[symbol]
+                      .worst_day_completeness
+                  }}%</span
+                >
+              </div>
+              <div>
+                <span class="text-base-content/70">Best Day:</span>
+                <span class="font-medium ml-1 text-success"
+                  >{{
+                    completenessResult.symbol_completeness[symbol]
+                      .best_day_completeness
+                  }}%</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Gap Filling Results (if available) -->
+          <div
+            class="mt-3 pt-3 border-t border-base-300"
+            *ngIf="
+              completenessResult.symbol_completeness[symbol].gap_fill_attempted
+            "
+          >
+            <div class="mb-2">
+              <span class="text-xs font-medium text-blue-600"
+                >🔧 Gap Filling Results</span
+              >
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+              <div>
+                <span class="text-base-content/70">Gaps Found:</span>
+                <span class="font-medium ml-1 text-blue-600">{{
+                  completenessResult.symbol_completeness[symbol]
+                    .total_gaps_found || 0
+                }}</span>
+              </div>
+              <div>
+                <span class="text-base-content/70">Filled:</span>
+                <span class="font-medium ml-1 text-green-600">{{
+                  completenessResult.symbol_completeness[symbol]
+                    .gaps_filled_successfully || 0
+                }}</span>
+              </div>
+              <div>
+                <span class="text-base-content/70">Unavailable:</span>
+                <span class="font-medium ml-1 text-orange-600">{{
+                  completenessResult.symbol_completeness[symbol]
+                    .gaps_vendor_unavailable || 0
+                }}</span>
+              </div>
+              <div>
+                <span class="text-base-content/70">Recovered:</span>
+                <span class="font-medium ml-1 text-purple-600">{{
+                  completenessResult.symbol_completeness[symbol]
+                    .candles_recovered || 0
+                }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Polygon URLs for Missing Data (if include_details is enabled) -->
+          <div
+            class="mt-4"
+            *ngIf="
+              completenessRequest.include_details &&
+              completenessResult.symbol_completeness[symbol].validation_results
+            "
+          >
+            <div
+              class="collapse collapse-arrow border border-base-300 bg-base-100"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-sm font-medium">
+                🔗 Polygon API URLs for Missing Data Verification
+              </div>
+              <div class="collapse-content">
+                <div
+                  class="space-y-3"
+                  *ngFor="
+                    let vr of completenessResult.symbol_completeness[symbol]
+                      .validation_results
+                  "
+                >
+                  <div
+                    *ngIf="vr.missing_periods && vr.missing_periods.length > 0"
+                  >
+                    <div class="text-xs font-medium text-base-content/70 mb-2">
+                      📅 {{ vr.validation_date }} -
+                      {{ vr.missing_periods.length }} missing period(s)
+                    </div>
+
+                    <!-- Missing Periods with Polygon URLs -->
+                    <div class="space-y-2">
+                      <div
+                        class="bg-orange-50 border border-orange-200 rounded-lg p-3"
+                        *ngFor="let period of vr.missing_periods; let i = index"
+                      >
+                        <div class="flex items-start justify-between mb-2">
+                          <div class="text-xs">
+                            <span class="badge badge-sm badge-warning">
+                              Missing Period {{ i + 1 }}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="text-xs space-y-1">
+                          <div>
+                            <span class="text-base-content/70"
+                              >Time Range:</span
+                            >
+                            <span class="font-mono ml-1">{{ period }}</span>
+                          </div>
+
+                          <div
+                            *ngIf="
+                              vr.polygon_urls_for_missing_periods &&
+                              vr.polygon_urls_for_missing_periods[i]
+                            "
+                          >
+                            <span class="text-base-content/70"
+                              >Polygon API URL:</span
+                            >
+                            <div class="mt-1">
+                              <a
+                                [href]="vr.polygon_urls_for_missing_periods[i]"
+                                target="_blank"
+                                class="link link-primary text-xs font-mono break-all"
+                              >
+                                {{ vr.polygon_urls_for_missing_periods[i] }}
+                              </a>
+                            </div>
+                            <div class="text-xs text-base-content/60 mt-1">
+                              Click to verify data availability in Polygon
+                            </div>
+                          </div>
+
+                          <div
+                            *ngIf="
+                              !vr.polygon_urls_for_missing_periods ||
+                              !vr.polygon_urls_for_missing_periods[i]
+                            "
+                            class="text-red-600"
+                          >
+                            ⚠️ No Polygon URL available
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Gap-Filling Results (if include_details is enabled) -->
+          <div
+            class="mt-4"
+            *ngIf="
+              completenessRequest.include_details &&
+              completenessResult.symbol_completeness[symbol]
+                .validation_results &&
+              hasGapFillingResults()
+            "
+          >
+            <div
+              class="collapse collapse-arrow border border-base-300 bg-base-100"
+            >
+              <input type="checkbox" />
+              <div class="collapse-title text-sm font-medium">
+                🔧 Detailed Gap-Filling Results & Polygon URLs
+              </div>
+              <div class="collapse-content">
+                <div
+                  class="space-y-3"
+                  *ngFor="
+                    let vr of completenessResult.symbol_completeness[symbol]
+                      .validation_results
+                  "
+                >
+                  <div
+                    *ngIf="
+                      vr.gap_fill_results && vr.gap_fill_results.length > 0
+                    "
+                  >
+                    <div class="text-xs font-medium text-base-content/70 mb-2">
+                      📅 {{ vr.validation_date }}
+                    </div>
+                    <div
+                      class="space-y-2"
+                      *ngFor="let gfr of vr.gap_fill_results; let i = index"
+                    >
+                      <div
+                        class="bg-base-50 border border-base-200 rounded-lg p-3"
+                      >
+                        <div class="flex items-start justify-between mb-2">
+                          <div class="text-xs">
+                            <span
+                              class="badge badge-sm"
+                              [class.badge-success]="gfr.success"
+                              [class.badge-error]="!gfr.success"
+                            >
+                              {{ gfr.success ? "SUCCESS" : "FAILED" }}
+                            </span>
+                            <span class="ml-2 text-base-content/70">
+                              Gap {{ i + 1 }}
+                            </span>
+                          </div>
+                          <div class="text-xs text-base-content/70">
+                            {{ gfr.candles_recovered }} candles recovered
+                          </div>
+                        </div>
+
+                        <div class="text-xs space-y-1">
+                          <div>
+                            <span class="text-base-content/70"
+                              >Time Range:</span
+                            >
+                            <span class="font-mono ml-1">
+                              {{ formatDateTime(gfr.start_time) }} →
+                              {{ formatDateTime(gfr.end_time) }}
+                            </span>
+                          </div>
+
+                          <div *ngIf="gfr.polygon_api_url">
+                            <span class="text-base-content/70"
+                              >Polygon API URL:</span
+                            >
+                            <div class="mt-1">
+                              <a
+                                [href]="gfr.polygon_api_url"
+                                target="_blank"
+                                class="link link-primary text-xs font-mono break-all"
+                              >
+                                {{ gfr.polygon_api_url }}
+                              </a>
+                            </div>
+                          </div>
+
+                          <div
+                            *ngIf="gfr.vendor_unavailable"
+                            class="text-orange-600"
+                          >
+                            ⚠️ Data unavailable from vendor
+                          </div>
+
+                          <div *ngIf="gfr.error_message" class="text-red-600">
+                            ❌ {{ gfr.error_message }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symbols Needing Attention -->
+    <div
+      class="mt-4"
+      *ngIf="
+        completenessResult.symbols_needing_attention &&
+        completenessResult.symbols_needing_attention.length > 0
+      "
+    >
+      <div class="alert alert-warning">
+        <div>
+          <h6 class="font-semibold">⚠️ Symbols Needing Attention</h6>
+          <p class="text-sm mt-1">
+            {{ completenessResult.symbols_needing_attention.join(", ") }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div
+      class="mt-4"
+      *ngIf="
+        completenessResult.recommendations &&
+        completenessResult.recommendations.length > 0
+      "
+    >
+      <div class="alert alert-info">
+        <div>
+          <h6 class="font-semibold">💡 Recommendations</h6>
+          <ul class="text-sm mt-1 list-disc list-inside">
+            <li
+              *ngFor="let recommendation of completenessResult.recommendations"
+            >
+              {{ recommendation }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

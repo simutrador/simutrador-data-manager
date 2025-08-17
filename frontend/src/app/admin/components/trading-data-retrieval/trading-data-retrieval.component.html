@@ -1,0 +1,204 @@
+<!-- Trading Data Retrieval Content -->
+<div class="p-4">
+  <!-- Symbol Input -->
+  <div class="form-control mb-4">
+    <label class="label">
+      <span class="label-text font-medium">Symbols</span>
+    </label>
+    <input
+      type="text"
+      class="input input-bordered input-sm"
+      placeholder="AAPL, MSFT, GOOGL"
+      [(ngModel)]="symbolsInput"
+      (input)="onSymbolsInputChange()"
+    />
+    <div class="text-sm text-gray-500 mt-1">
+      Enter comma-separated symbols to retrieve data for
+    </div>
+  </div>
+
+  <!-- Timeframe -->
+  <div class="form-control mb-4">
+    <label class="label">
+      <span class="label-text">Timeframe</span>
+    </label>
+    <select
+      class="select select-bordered w-full"
+      [(ngModel)]="dataRequest.timeframe"
+    >
+      <option *ngFor="let timeframe of availableTimeframes" [value]="timeframe">
+        {{ timeframe }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Date Range -->
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Start Date</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered"
+        [(ngModel)]="dataRequest.startDate"
+      />
+    </div>
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">End Date</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered"
+        [(ngModel)]="dataRequest.endDate"
+      />
+    </div>
+  </div>
+
+  <!-- Pagination Settings -->
+  <div class="mb-6">
+    <div class="form-control w-full max-w-xs">
+      <label class="label">
+        <span class="label-text">Page Size</span>
+      </label>
+      <select
+        class="select select-bordered"
+        [(ngModel)]="dataRequest.pageSize"
+        (change)="onPageSizeChange()"
+      >
+        <option value="100">100 items</option>
+        <option value="500">500 items</option>
+        <option value="1000">1000 items</option>
+        <option value="2000">2000 items</option>
+        <option value="5000">5000 items</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Fetch Button -->
+  <button
+    class="btn btn-success w-full mb-4"
+    [class.loading]="isLoadingData"
+    [disabled]="isLoadingData"
+    (click)="fetchData()"
+  >
+    <span *ngIf="!isLoadingData">🔍 Fetch Trading Data</span>
+    <span *ngIf="isLoadingData">Loading...</span>
+  </button>
+
+  <!-- Note about multiple symbols -->
+  <div
+    class="text-sm text-gray-500 mb-4"
+    *ngIf="dataRequest.symbols.length > 1"
+  >
+    Note: Currently showing data for {{ dataRequest.symbols[0] }} only. Multiple
+    symbol support coming soon.
+  </div>
+</div>
+
+<!-- Retrieved Data Table -->
+<div *ngIf="retrievedData.length > 0" class="mt-8">
+  <h3 class="text-lg font-semibold mb-4">Retrieved Data</h3>
+  <div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr>
+          <th>DATE</th>
+          <th>OPEN</th>
+          <th>HIGH</th>
+          <th>LOW</th>
+          <th>CLOSE</th>
+          <th>VOLUME</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let candle of retrievedData">
+          <td class="font-mono">{{ candle.date }}</td>
+          <td class="">{{ candle.open | number : "1.2-2" }}</td>
+          <td class="text-success">
+            {{ candle.high | number : "1.2-2" }}
+          </td>
+          <td class="text-error">
+            {{ candle.low | number : "1.2-2" }}
+          </td>
+          <td class="">{{ candle.close | number : "1.2-2" }}</td>
+          <td class="">{{ candle.volume | number }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination Info and Controls -->
+  <div
+    class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4"
+    *ngIf="paginationInfo"
+  >
+    <div class="text-sm text-base-content/70">
+      Showing {{ retrievedData.length }} of
+      {{ paginationInfo.total_items }} records (Page
+      {{ paginationInfo.page }} of {{ paginationInfo.total_pages }})
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="flex items-center gap-2">
+      <!-- Navigation Buttons -->
+      <div class="join">
+        <button
+          class="join-item btn btn-sm"
+          [disabled]="!paginationInfo.has_previous"
+          (click)="goToFirstPage()"
+          title="First page"
+        >
+          ⏮️
+        </button>
+        <button
+          class="join-item btn btn-sm"
+          [disabled]="!paginationInfo.has_previous"
+          (click)="goToPreviousPage()"
+          title="Previous page"
+        >
+          ⬅️
+        </button>
+        <button
+          class="join-item btn btn-sm"
+          [disabled]="!paginationInfo.has_next"
+          (click)="goToNextPage()"
+          title="Next page"
+        >
+          ➡️
+        </button>
+        <button
+          class="join-item btn btn-sm"
+          [disabled]="!paginationInfo.has_next"
+          (click)="goToLastPage()"
+          title="Last page"
+        >
+          ⏭️
+        </button>
+      </div>
+
+      <!-- Current Page Input -->
+      <div class="flex items-center gap-2 ml-4">
+        <span class="text-sm text-base-content/70">Go to page:</span>
+        <input
+          type="number"
+          class="input input-bordered input-sm w-20"
+          [(ngModel)]="dataRequest.page"
+          min="1"
+          [max]="paginationInfo.total_pages"
+          (change)="goToPage(dataRequest.page)"
+          (keyup.enter)="goToPage(dataRequest.page)"
+          title="Enter page number"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Fallback for non-paginated data -->
+  <div
+    class="text-sm text-base-content/70 mt-2"
+    *ngIf="!paginationInfo && retrievedData.length > 0"
+  >
+    Showing {{ retrievedData.length }} records
+  </div>
+</div>

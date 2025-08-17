@@ -1,0 +1,3 @@
+"""
+Trading Simulator Backend Package.
+"""

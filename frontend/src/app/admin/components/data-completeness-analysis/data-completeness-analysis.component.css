@@ -1,0 +1,128 @@
+/* Data Completeness Analysis Component Styles */
+
+.card {
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stats .stat {
+  transition: all 0.2s ease-in-out;
+}
+
+.stats .stat:hover {
+  transform: scale(1.02);
+}
+
+.badge {
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.alert {
+  border-radius: 0.5rem;
+}
+
+.form-control {
+  margin-bottom: 0.5rem;
+}
+
+.btn.loading {
+  pointer-events: none;
+}
+
+/* Custom scrollbar for results */
+.space-y-3 {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.space-y-3::-webkit-scrollbar {
+  width: 6px;
+}
+
+.space-y-3::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.space-y-3::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.space-y-3::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced stat cards */
+.stat {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.stat-title {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-weight: 700;
+}
+
+/* Color-coded stat cards for gap filling */
+.stat.bg-blue-50 {
+  background-color: #eff6ff;
+  border-color: #dbeafe;
+}
+
+.stat.bg-green-50 {
+  background-color: #f0fdf4;
+  border-color: #dcfce7;
+}
+
+.stat.bg-orange-50 {
+  background-color: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.stat.bg-purple-50 {
+  background-color: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+/* Symbol analysis cards */
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+/* Loading state */
+.btn.loading::after {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stats {
+    flex-direction: column;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

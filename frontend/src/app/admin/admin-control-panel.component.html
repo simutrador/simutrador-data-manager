@@ -1,0 +1,52 @@
+<div class="min-h-screen bg-base-100 p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+      <div class="text-2xl">📊</div>
+      <h1 class="text-2xl font-bold">Trading Data Control Panel</h1>
+    </div>
+    <div class="flex items-center gap-2 text-sm">
+      <span>Last Update: Today 14:32</span>
+      <div class="w-2 h-2 bg-success rounded-full"></div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="space-y-6">
+    <!-- Nightly Update Panel -->
+    <div class="collapse collapse-arrow bg-base-200 shadow-lg">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-lg font-semibold flex items-center gap-2">
+        <span class="text-blue-500">🌙</span>
+        Nightly Update
+      </div>
+      <div class="collapse-content">
+        <app-nightly-update></app-nightly-update>
+      </div>
+    </div>
+
+    <!-- Data Completeness Analysis Panel -->
+    <div class="collapse collapse-arrow bg-base-200 shadow-lg">
+      <input type="checkbox" />
+      <div class="collapse-title text-lg font-semibold flex items-center gap-2">
+        <span class="text-green-500">📊</span>
+        Data Completeness Analysis
+      </div>
+      <div class="collapse-content">
+        <app-data-completeness-analysis></app-data-completeness-analysis>
+      </div>
+    </div>
+
+    <!-- Trading Data Retrieval Panel -->
+    <div class="collapse collapse-arrow bg-base-200 shadow-lg">
+      <input type="checkbox" />
+      <div class="collapse-title text-lg font-semibold flex items-center gap-2">
+        <span class="text-purple-500">📈</span>
+        Trading Data Retrieval
+      </div>
+      <div class="collapse-content">
+        <app-trading-data-retrieval></app-trading-data-retrieval>
+      </div>
+    </div>
+  </div>
+</div>

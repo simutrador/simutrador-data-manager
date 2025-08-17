@@ -1,0 +1,23 @@
+{
+  "symbol": "AAPL",
+  "timeframe": "15m",
+  "start": "2024-04-01T00:00:00Z",
+  "end": "2024-07-01T00:00:00Z",
+  "orders": [
+    {
+      "entry_time": "2024-05-10T14:00:00Z",
+      "entry_type": "LMT",
+      "entry_price": 185.50,
+      "side": "buy",
+      "stop_loss": 182.00,
+      "take_profit": 190.00
+    },
+    {
+      "entry_time": "2024-05-15T09:30:00Z",
+      "entry_type": "MKT",
+      "side": "sell",
+      "stop_loss": 188.00,
+      "take_profit": 180.00
+    }
+  ]
+}

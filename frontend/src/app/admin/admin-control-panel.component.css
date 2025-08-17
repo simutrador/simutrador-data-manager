@@ -1,0 +1,134 @@
+.card-header {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.stat {
+  transition: transform 0.2s ease;
+}
+
+.stat:hover {
+  transform: translateY(-2px);
+}
+
+.progress {
+  height: 8px;
+}
+
+.table th {
+  background: rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* Badge styles are handled directly in template with DaisyUI classes */
+
+/* Custom scrollbar for table */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Loading animation */
+.loading {
+  position: relative;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Collapsible Panel Styles */
+.collapse {
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.collapse:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.collapse-title {
+  padding: 1.5rem;
+  font-weight: 600;
+  border-radius: 0.75rem 0.75rem 0 0;
+  transition: all 0.2s ease;
+}
+
+.collapse-title:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.collapse-content {
+  padding: 0;
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+/* Panel Icons */
+.collapse-title span:first-child {
+  font-size: 1.25rem;
+  margin-right: 0.5rem;
+}
+
+/* Smooth expand/collapse animation */
+.collapse input[type="checkbox"]:checked ~ .collapse-content {
+  animation: expandPanel 0.3s ease-out;
+}
+
+@keyframes expandPanel {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-cols-6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .collapse-title {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,53 @@
+[project]
+name = "simutrador-data-manager-backend"
+version = "0.1.0"
+description = "SimuTrador Data Manager Backend - Trading simulation execution engine"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.115.12",
+    "httpx>=0.28.1",
+    "pandas>=2.3.0",
+    "pandas-market-calendars>=5.1.1",
+    "pyarrow>=20.0.0",
+    "pydantic>=2.11.5",
+    "pydantic-settings>=2.10.1",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.0.0",
+    "requests>=2.32.4",
+    "simutrador-core==1.0.3",
+]
+
+[dependency-groups]
+dev = [
+    "pandas-stubs>=2.3.0.250703",
+    "ruff>=0.11.13",
+]
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = ["__pycache__", ".venv", "migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+explicit = true
+
+[tool.uv.sources]
+"simutrador-core" = { index = "testpypi" }
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["api", "core", "models", "services"]
+
+[tool.pytest.ini_options]
+testpaths = ["src/tests"]
+pythonpath = ["src"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
