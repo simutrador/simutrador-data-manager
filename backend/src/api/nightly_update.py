@@ -14,15 +14,6 @@ from typing import Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 
-from ..models.nightly_update_api import (
-    ActiveUpdateInfo,
-    ActiveUpdateSummary,
-    NightlyUpdateRequest,
-    NightlyUpdateResponse,
-    ProgressInfo,
-    UpdateProgressDetailsResponse,
-    UpdateStatusResponse,
-)
 from services.progress.nightly_update_progress_service import (
     NightlyUpdateProgressService,
 )
@@ -31,6 +22,16 @@ from services.validation.stock_market_validation_service import (
 )
 from services.workflows.stock_market_nightly_update_service import (
     StockMarketNightlyUpdateService,
+)
+
+from ..models.nightly_update_api import (
+    ActiveUpdateInfo,
+    ActiveUpdateSummary,
+    NightlyUpdateRequest,
+    NightlyUpdateResponse,
+    ProgressInfo,
+    UpdateProgressDetailsResponse,
+    UpdateStatusResponse,
 )
 
 logger = logging.getLogger(__name__)

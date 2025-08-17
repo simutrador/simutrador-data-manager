@@ -17,10 +17,9 @@ from typing import Any, Dict, List, Optional, TypedDict, cast, override
 
 import httpx
 from pydantic import ValidationError
-
-from ...core.settings import get_settings
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
+from ...core.settings import get_settings
 from .data_provider_interface import (
     AuthenticationError,
     DataProviderError,
@@ -427,7 +426,7 @@ class PolygonClient(DataProviderInterface):
                     volume=Decimal(str(candle_data["v"])),
                 )
                 candles.append(candle)
-            except (KeyError, ValueError, ValidationError) as e:
+            except (KeyError, ValueError) as e:
                 logger.warning(f"Skipping invalid candle data: {item}, error: {e}")
                 continue
 

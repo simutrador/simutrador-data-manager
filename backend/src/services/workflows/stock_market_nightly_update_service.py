@@ -13,6 +13,8 @@ import logging
 from datetime import date, datetime, timedelta
 from typing import Callable, Dict, List, Optional, override
 
+from simutrador_core.models.price_data import DataUpdateStatus, Timeframe
+
 from ...core.settings import get_settings
 from ...models.nightly_update_api import (
     NightlyUpdateRequest,
@@ -21,7 +23,6 @@ from ...models.nightly_update_api import (
     SymbolUpdateResult,
     ValidationResultModel,
 )
-from simutrador_core.models.price_data import DataUpdateStatus, Timeframe
 from ..progress.nightly_update_progress_service import (
     NightlyUpdateProgressService,
 )
@@ -31,7 +32,6 @@ from ..validation.stock_market_validation_service import (
     StockMarketValidationService,
     ValidationResult,
 )
-
 from .stock_market_resampling_workflow import (
     StockMarketResamplingWorkflow,
 )

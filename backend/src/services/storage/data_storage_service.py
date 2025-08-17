@@ -15,9 +15,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
+from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
 from ...core.settings import get_settings
-from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
 logger = logging.getLogger(__name__)
 

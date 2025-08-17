@@ -9,9 +9,10 @@ import logging
 from datetime import date, datetime, timedelta, timezone
 from typing import Dict, List, Tuple, Union
 
+from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
+
 from ..core.settings import get_settings
 from ..models.nightly_update_api import GapFillResult
-from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 from .data_providers.data_provider_factory import (
     DataProvider,
     DataProviderFactory,

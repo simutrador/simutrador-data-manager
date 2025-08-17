@@ -16,18 +16,17 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 from pydantic import ValidationError
+from simutrador_core.models.asset_types import AssetType, get_resampling_offset
+from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
 from ...core.timeframe_utils import (
     get_pandas_frequency,
     get_resampling_rules,
     validate_timeframe_conversion,
 )
-from simutrador_core.models.asset_types import AssetType, get_resampling_offset
-from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 from ..classification.asset_classification_service import (
     AssetClassificationService,
 )
-
 from .data_storage_service import DataStorageError, DataStorageService
 
 logger = logging.getLogger(__name__)
@@ -723,7 +722,7 @@ class DataResamplingService:
                     volume=Decimal(str(row["volume"])),
                 )
                 candles.append(candle)
-            except (ValidationError, ValueError) as e:
+            except ValueError as e:
                 logger.warning(
                     f"Skipping invalid {timeframe} candle: {row.to_dict()}, error: {e}"  # type: ignore[reportUnknownMemberType]
                 )

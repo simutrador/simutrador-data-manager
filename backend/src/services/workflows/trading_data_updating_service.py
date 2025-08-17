@@ -13,6 +13,7 @@ from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional
 
 from simutrador_core.models.price_data import DataUpdateStatus
+
 from ..data_providers.data_provider_factory import (
     DataProvider,
     DataProviderFactory,

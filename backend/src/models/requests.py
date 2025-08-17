@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel, Field
-
 from simutrador_core.models.orders import Order
 from simutrador_core.models.price_data import Timeframe
 
