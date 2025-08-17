@@ -43,10 +43,10 @@ except ImportError:
                     self.offset = offset
 
 
-from core.settings import get_settings
-from models.price_data import PriceCandle, Timeframe
-from services.polygon_url_generator import PolygonUrlGenerator
-from services.storage.data_storage_service import DataStorageService
+from ...core.settings import get_settings
+from simutrador_core.models.price_data import PriceCandle, Timeframe
+from ..polygon_url_generator import PolygonUrlGenerator
+from ..storage.data_storage_service import DataStorageService
 
 logger = logging.getLogger(__name__)
 

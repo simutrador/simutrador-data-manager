@@ -10,7 +10,7 @@ from datetime import date
 from types import TracebackType
 from typing import Dict, Optional
 
-from models.price_data import PriceCandle, PriceDataSeries
+from simutrador_core.models.price_data import PriceCandle, PriceDataSeries
 
 
 class DataProviderError(Exception):

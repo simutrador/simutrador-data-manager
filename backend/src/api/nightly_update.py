@@ -14,7 +14,7 @@ from typing import Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 
-from models.nightly_update_api import (
+from ..models.nightly_update_api import (
     ActiveUpdateInfo,
     ActiveUpdateSummary,
     NightlyUpdateRequest,

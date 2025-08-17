@@ -12,18 +12,18 @@ import logging
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional
 
-from models.price_data import DataUpdateStatus
-from services.data_providers.data_provider_factory import (
+from simutrador_core.models.price_data import DataUpdateStatus
+from ..data_providers.data_provider_factory import (
     DataProvider,
     DataProviderFactory,
 )
-from services.data_providers.data_provider_interface import (
+from ..data_providers.data_provider_interface import (
     AuthenticationError,
     DataProviderError,
     DataProviderInterface,
     RateLimitError,
 )
-from services.storage.data_storage_service import DataStorageService
+from ..storage.data_storage_service import DataStorageService
 
 logger = logging.getLogger(__name__)
 

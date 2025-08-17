@@ -9,7 +9,7 @@ import logging
 import re
 from typing import Dict, List
 
-from models.asset_types import AssetType
+from simutrador_core.models.asset_types import AssetType
 
 logger = logging.getLogger(__name__)
 

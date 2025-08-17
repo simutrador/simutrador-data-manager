@@ -17,14 +17,14 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 from pydantic import ValidationError
 
-from core.timeframe_utils import (
+from ...core.timeframe_utils import (
     get_pandas_frequency,
     get_resampling_rules,
     validate_timeframe_conversion,
 )
-from models.asset_types import AssetType, get_resampling_offset
-from models.price_data import PriceCandle, PriceDataSeries, Timeframe
-from services.classification.asset_classification_service import (
+from simutrador_core.models.asset_types import AssetType, get_resampling_offset
+from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
+from ..classification.asset_classification_service import (
     AssetClassificationService,
 )
 

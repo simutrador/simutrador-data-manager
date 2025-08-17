@@ -7,8 +7,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, computed_field
 
-from .enums import OrderSide, TradeResult
-from .price_data import Timeframe
+from simutrador_core.models.enums import OrderSide, TradeResult
+from simutrador_core.models.price_data import Timeframe
 
 
 class Trade(BaseModel):

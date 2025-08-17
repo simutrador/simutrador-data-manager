@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from models.nightly_update_api import ActiveUpdateInfo, ProgressInfo, SymbolProgress
+from ...models.nightly_update_api import ActiveUpdateInfo, ProgressInfo, SymbolProgress
 
 logger = logging.getLogger(__name__)
 

@@ -18,8 +18,8 @@ from typing import Any, Dict, List, Optional, TypedDict, cast, override
 import httpx
 from pydantic import ValidationError
 
-from core.settings import get_settings
-from models.price_data import PriceCandle, PriceDataSeries, Timeframe
+from ...core.settings import get_settings
+from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
 from .data_provider_interface import (
     AuthenticationError,
