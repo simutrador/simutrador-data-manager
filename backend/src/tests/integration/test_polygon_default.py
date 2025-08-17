@@ -115,7 +115,7 @@ def test_resampling_with_polygon_alignment():
     from datetime import datetime, timezone
     from decimal import Decimal
 
-    from models.price_data import PriceCandle, PriceDataSeries, Timeframe
+    from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
     # Create mock settings
     mock_settings = type(

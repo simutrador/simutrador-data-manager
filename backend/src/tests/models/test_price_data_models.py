@@ -12,7 +12,7 @@ from pydantic import ValidationError
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models.price_data import (
+from simutrador_core.models.price_data import (
     DataUpdateStatus,
     PriceCandle,
     PriceDataSeries,

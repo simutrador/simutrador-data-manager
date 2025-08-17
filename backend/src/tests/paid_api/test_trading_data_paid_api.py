@@ -31,7 +31,7 @@ os.environ["ENV"] = test_env_path
 
 from core.settings import get_settings  # noqa: E402
 from main import app  # noqa: E402
-from models.price_data import PriceCandle  # noqa: E402
+from simutrador_core.models.price_data import PriceCandle  # noqa: E402
 from services.storage.data_storage_service import DataStorageService  # noqa: E402
 
 # Clear settings cache to ensure test environment is loaded

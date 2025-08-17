@@ -15,7 +15,6 @@ from decimal import Decimal
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
-from pydantic import ValidationError
 from simutrador_core.models.asset_types import AssetType, get_resampling_offset
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 

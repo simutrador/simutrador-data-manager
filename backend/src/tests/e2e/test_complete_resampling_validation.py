@@ -22,7 +22,7 @@ from services.storage.data_resampling_service import DataResamplingService
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from models.price_data import PriceCandle, PriceDataSeries, Timeframe
+from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
 logger = logging.getLogger(__name__)
 
