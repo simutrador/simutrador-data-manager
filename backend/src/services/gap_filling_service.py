@@ -13,6 +13,7 @@ from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Time
 
 from core.settings import get_settings
 from models.nightly_update_api import GapFillResult
+
 from .data_providers.data_provider_factory import (
     DataProvider,
     DataProviderFactory,

@@ -20,6 +20,7 @@ from pydantic import ValidationError
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
 from core.settings import get_settings
+
 from .data_provider_interface import (
     AuthenticationError,
     DataProviderError,

@@ -23,6 +23,7 @@ from models.nightly_update_api import (
     SymbolUpdateResult,
     ValidationResultModel,
 )
+
 from ..progress.nightly_update_progress_service import (
     NightlyUpdateProgressService,
 )
