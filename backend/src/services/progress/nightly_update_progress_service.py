@@ -8,8 +8,9 @@ providing centralized storage and calculation of progress information.
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from models.nightly_update_api import ActiveUpdateInfo, ProgressInfo, SymbolProgress
 from simutrador_core.utils import get_default_logger
+
+from models.nightly_update_api import ActiveUpdateInfo, ProgressInfo, SymbolProgress
 
 logger = get_default_logger("nightly_update_progress")
 

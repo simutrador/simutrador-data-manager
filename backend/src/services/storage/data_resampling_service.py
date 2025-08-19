@@ -16,7 +16,6 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 from simutrador_core.models.asset_types import AssetType, get_resampling_offset
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
-
 from simutrador_core.utils import (
     get_default_logger,
     get_pandas_frequency,

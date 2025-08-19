@@ -10,7 +10,6 @@ This service handles validation of stock market data including:
 All timestamps are handled in UTC to eliminate timezone conversion issues.
 """
 
-import logging
 from datetime import date, datetime, time, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set, Tuple
 
