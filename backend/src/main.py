@@ -6,28 +6,25 @@ This is the main entry point for the Trading Simulator API.
 
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from simutrador_core.utils import configure_third_party_loggers, setup_logger
 
 from api import data_analysis_router, simulation_router, trading_data_router
 from api.nightly_update import router as nightly_update_router
 
-# Configure logging for the application
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),  # Console output
-        logging.FileHandler("app.log"),  # File output
-    ],
+# Configure standardized logging for the application
+logger = setup_logger(
+    name="data_manager",
+    log_dir=Path.cwd() / "logs",
+    console_level=logging.INFO,
+    file_level=logging.ERROR,
 )
 
-# Set specific loggers to appropriate levels
-logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
-logging.getLogger("httpx").setLevel(logging.WARNING)
-
-logger = logging.getLogger(__name__)
+# Configure third-party loggers to reduce noise
+configure_third_party_loggers()
 
 
 @asynccontextmanager

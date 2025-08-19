@@ -5,13 +5,13 @@ This service analyzes trading symbols to determine their asset type and
 corresponding market characteristics for proper resampling alignment.
 """
 
-import logging
 import re
 from typing import Dict, List
 
 from simutrador_core.models.asset_types import AssetType
+from simutrador_core.utils import get_default_logger
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("asset_classification")
 
 
 class AssetClassificationService:

@@ -6,16 +6,16 @@ This module provides REST API endpoints for:
 - Listing available symbols
 """
 
-import logging
 from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from simutrador_core.models.price_data import PaginationInfo, PriceDataSeries
+from simutrador_core.utils import get_default_logger
 
 from services.storage.data_storage_service import DataStorageService
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("api.trading_data")
 
 router = APIRouter(prefix="/trading-data", tags=["trading-data"])
 

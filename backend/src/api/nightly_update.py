@@ -7,12 +7,12 @@ This module provides REST API endpoints for:
 - Managing update schedules
 """
 
-import logging
 import uuid
 from datetime import datetime
 from typing import Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from simutrador_core.utils import get_default_logger
 
 from models.nightly_update_api import (
     ActiveUpdateInfo,
@@ -33,7 +33,7 @@ from services.workflows.stock_market_nightly_update_service import (
     StockMarketNightlyUpdateService,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("api.nightly_update")
 
 router = APIRouter(prefix="/nightly-update", tags=["nightly-update"])
 

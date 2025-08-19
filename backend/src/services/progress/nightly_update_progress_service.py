@@ -5,13 +5,13 @@ This service manages progress tracking for nightly update operations,
 providing centralized storage and calculation of progress information.
 """
 
-import logging
 from datetime import datetime
 from typing import Dict, List, Optional
 
 from models.nightly_update_api import ActiveUpdateInfo, ProgressInfo, SymbolProgress
+from simutrador_core.utils import get_default_logger
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("nightly_update_progress")
 
 
 class NightlyUpdateProgressService:

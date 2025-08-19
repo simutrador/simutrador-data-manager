@@ -8,11 +8,11 @@ This service orchestrates the fetching and storing of trading data:
 - Provides status tracking and error handling
 """
 
-import logging
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional
 
 from simutrador_core.models.price_data import DataUpdateStatus
+from simutrador_core.utils import get_default_logger
 
 from ..data_providers.data_provider_factory import (
     DataProvider,
@@ -26,7 +26,7 @@ from ..data_providers.data_provider_interface import (
 )
 from ..storage.data_storage_service import DataStorageService
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("trading_data_updating")
 
 
 class TradingDataUpdatingService:

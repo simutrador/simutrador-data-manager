@@ -44,13 +44,14 @@ except ImportError:
 
 
 from simutrador_core.models.price_data import PriceCandle, Timeframe
+from simutrador_core.utils import get_default_logger
 
 from core.settings import get_settings
 
 from ..polygon_url_generator import PolygonUrlGenerator
 from ..storage.data_storage_service import DataStorageService
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("stock_market_validation")
 
 
 # Only define custom calendar classes if pandas_market_calendars is not available

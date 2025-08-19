@@ -9,7 +9,6 @@ This service:
 - Supports flexible timeframe conversions (1min→5min, 5min→1h, etc.)
 """
 
-import logging
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
@@ -18,7 +17,8 @@ import pandas as pd
 from simutrador_core.models.asset_types import AssetType, get_resampling_offset
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
-from core.timeframe_utils import (
+from simutrador_core.utils import (
+    get_default_logger,
     get_pandas_frequency,
     get_resampling_rules,
     validate_timeframe_conversion,
@@ -29,7 +29,7 @@ from ..classification.asset_classification_service import (
 )
 from .data_storage_service import DataStorageError, DataStorageService
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("data_resampling")
 
 
 class DataResamplingError(Exception):

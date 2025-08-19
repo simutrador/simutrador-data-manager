@@ -8,7 +8,6 @@ This service handles:
 - Data deduplication and merging
 """
 
-import logging
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -16,10 +15,11 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
+from simutrador_core.utils import get_default_logger
 
 from core.settings import get_settings
 
-logger = logging.getLogger(__name__)
+logger = get_default_logger("data_storage")
 
 # Constants
 PARQUET_FILE_PATTERN = "*.parquet"
