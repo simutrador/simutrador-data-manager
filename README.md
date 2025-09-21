@@ -1,8 +1,19 @@
-# SimuTrador Core
+# SimuTrador Data Manager
 
-🎯 **Shared models and utilities for the SimuTrador trading simulation ecosystem**
+🎯 **Open-source OHLCV data collection and management system for SimuTrador**
 
-A Python package providing common data models, enums, and utilities used across all SimuTrador components. This library ensures type safety and consistency across the distributed architecture.
+FastAPI backend and Angular frontend providing data ingestion, storage, validation, analysis, and APIs.
+
+### Related Documentation
+
+- Project Overview (architecture): https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/main.md
+- WebSocket API v2 (central spec): https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/simutrador-server/ws_api_v2.md
+- Core Models (shared library): https://github.com/simutrador/simutrador-core
+- API Docs (this repo): docs/ohlcv_manager.md, docs/nightly%20update.md, docs/data%20analysis.md
+- Backend Guide: backend/README.md
+- Frontend Guide: frontend/README.md
+- AI Index (agent entry): ai-index.md
+- STATUS (current status/milestones): STATUS.md
 
 ## 🏗️ What's Included
 
@@ -65,24 +76,6 @@ series = PriceDataSeries(
 - **Pydantic 2.11+** - Data validation and serialization
 - **Pandas 2.3+** - Data manipulation and analysis
 
-## 📚 Documentation
-
-### Local Documentation
-
-- **WebSocket API v2**: [`docs/ws_api_v2.md`](docs/ws_api_v2.md) - Real-time communication specification
-- **Model Examples**: [`docs/simutrade_ws_models_sample.py`](docs/simutrade_ws_models_sample.py) - Usage examples
-
-### Project-Wide Documentation
-
-- **Project Overview**: [SimuTrador Architecture](https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/main.md)
-- **Data Manager**: [simutrador-data-manager](https://github.com/simutrador/simutrador-data-manager) - Data collection and management system
-- **Migration History**: [Repository Migration Plan](https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/repository-migration-plan.md)
-
-### API Reference
-
-- **Package Documentation**: Coming soon - comprehensive API reference
-- **Type Definitions**: All models include full type hints and docstrings
-
 ## 🛠️ Development
 
 ### Backend Development
@@ -117,7 +110,7 @@ ng lint                 # Linting
 ### Project-Wide Documentation
 
 - **Project Overview**: [SimuTrador Architecture](https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/main.md)
-- **WebSocket API**: [WebSocket API v2](https://github.com/simutrador/simutrador-core/blob/main/docs/ws_api_v2.md) - Real-time communication spec
+- **WebSocket API**: [WebSocket API v2](https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/simutrador-server/ws_api_v2.md) - Real-time communication spec
 - **Core Models**: [simutrador-core](https://github.com/simutrador/simutrador-core) - Shared data models and utilities
 - **Migration History**: [Repository Migration Plan](https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/repository-migration-plan.md)
 
