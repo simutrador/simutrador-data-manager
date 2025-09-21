@@ -4,7 +4,7 @@
 
 The Data Analysis API provides endpoints for analyzing trading data quality and completeness:
 
-1. **POST** `/data-analysis/completeness` - Analyze data completeness
+1.  **POST** `/data-analysis/completeness` - Analyze data completeness
 
 ## Analyze Data Completeness
 
@@ -13,14 +13,15 @@ The Data Analysis API provides endpoints for analyzing trading data quality and 
 Analyze data completeness for specified symbols and date range.
 
 This endpoint provides detailed analysis of data completeness including:
-- Missing data periods
-- Validation errors and warnings
-- Completeness percentages
-- Recommendations for improvement
+
+*   Missing data periods
+*   Validation errors and warnings
+*   Completeness percentages
+*   Recommendations for improvement
 
 ### Request Body
 
-```json
+```
 {
   "symbols": ["AAPL", "MSFT", "GOOGL"],
   "start_date": "2025-01-01",
@@ -33,16 +34,16 @@ This endpoint provides detailed analysis of data completeness including:
 
 #### Parameters
 
-- **symbols** (required): Array of trading symbols to analyze
-- **start_date** (required): Start date for analysis (YYYY-MM-DD format)
-- **end_date** (required): End date for analysis (YYYY-MM-DD format)
-- **include_details** (optional): Whether to include detailed validation results (default: false)
-- **auto_fill_gaps** (optional): Automatically attempt to fill detected gaps (default: false)
-- **max_gap_fill_attempts** (optional): Maximum number of gaps to attempt filling per symbol (default: 50)
+*   **symbols** (required): Array of trading symbols to analyze
+*   **start\_date** (required): Start date for analysis (YYYY-MM-DD format)
+*   **end\_date** (required): End date for analysis (YYYY-MM-DD format)
+*   **include\_details** (optional): Whether to include detailed validation results (default: false)
+*   **auto\_fill\_gaps** (optional): Automatically attempt to fill detected gaps (default: false)
+*   **max\_gap\_fill\_attempts** (optional): Maximum number of gaps to attempt filling per symbol (default: 50)
 
 ### Response
 
-```json
+```
 {
   "analysis_period": {
     "start_date": "2025-01-01",
@@ -91,58 +92,65 @@ This endpoint provides detailed analysis of data completeness including:
 
 #### Response Fields
 
-**analysis_period**
-- **start_date**: Start date of the analysis
-- **end_date**: End date of the analysis
+**analysis\_period**
 
-**symbol_completeness** (per symbol)
-- **total_trading_days**: Total number of trading days in the period
-- **valid_days**: Number of days with complete data
-- **invalid_days**: Number of days with missing or incomplete data
-- **completeness_percentage**: Overall completeness percentage for the symbol
-- **total_expected_candles**: Total number of 1-minute candles expected
-- **total_actual_candles**: Total number of 1-minute candles found
-- **missing_candles**: Number of missing candles
-- **full_days_count**: Number of full trading days (390 candles)
-- **half_days_count**: Number of half trading days (210 candles)
-- **days_with_gaps**: Number of days with data gaps
-- **total_missing_periods**: Total number of missing time periods
-- **average_daily_completeness**: Average completeness percentage per day
-- **worst_day_completeness**: Lowest daily completeness percentage
-- **best_day_completeness**: Highest daily completeness percentage
-- **validation_results**: Detailed validation results (if include_details=true)
-- **gap_fill_attempted**: Whether gap filling was attempted
-- **total_gaps_found**: Number of gaps found during analysis
-- **gaps_filled_successfully**: Number of gaps successfully filled
-- **gaps_vendor_unavailable**: Number of gaps where vendor data was unavailable
-- **candles_recovered**: Number of candles recovered through gap filling
+*   **start\_date**: Start date of the analysis
+*   **end\_date**: End date of the analysis
 
-**overall_statistics**
-- **total_symbols**: Number of symbols analyzed
-- **total_trading_days**: Total trading days across all symbols
-- **total_valid_days**: Total valid days across all symbols
-- **overall_completeness_percentage**: Overall completeness percentage
-- **total_expected_candles**: Total expected candles across all symbols
-- **total_actual_candles**: Total actual candles found across all symbols
-- **total_missing_candles**: Total missing candles across all symbols
+**symbol\_completeness** (per symbol)
 
-**symbols_needing_attention**
-- Array of symbols with completeness below 95%
+*   **total\_trading\_days**: Total number of trading days in the period
+*   **valid\_days**: Number of days with complete data
+*   **invalid\_days**: Number of days with missing or incomplete data
+*   **completeness\_percentage**: Overall completeness percentage for the symbol
+*   **total\_expected\_candles**: Total number of 1-minute candles expected
+*   **total\_actual\_candles**: Total number of 1-minute candles found
+*   **missing\_candles**: Number of missing candles
+*   **full\_days\_count**: Number of full trading days (390 candles)
+*   **half\_days\_count**: Number of half trading days (210 candles)
+*   **days\_with\_gaps**: Number of days with data gaps
+*   **total\_missing\_periods**: Total number of missing time periods
+*   **average\_daily\_completeness**: Average completeness percentage per day
+*   **worst\_day\_completeness**: Lowest daily completeness percentage
+*   **best\_day\_completeness**: Highest daily completeness percentage
+*   **validation\_results**: Detailed validation results (if include\_details=true)
+*   **gap\_fill\_attempted**: Whether gap filling was attempted
+*   **total\_gaps\_found**: Number of gaps found during analysis
+*   **gaps\_filled\_successfully**: Number of gaps successfully filled
+*   **gaps\_vendor\_unavailable**: Number of gaps where vendor data was unavailable
+*   **candles\_recovered**: Number of candles recovered through gap filling
+
+**overall\_statistics**
+
+*   **total\_symbols**: Number of symbols analyzed
+*   **total\_trading\_days**: Total trading days across all symbols
+*   **total\_valid\_days**: Total valid days across all symbols
+*   **overall\_completeness\_percentage**: Overall completeness percentage
+*   **total\_expected\_candles**: Total expected candles across all symbols
+*   **total\_actual\_candles**: Total actual candles found across all symbols
+*   **total\_missing\_candles**: Total missing candles across all symbols
+
+**symbols\_needing\_attention**
+
+*   Array of symbols with completeness below 95%
 
 **recommendations**
-- Array of actionable recommendations to improve data quality
+
+*   Array of actionable recommendations to improve data quality
 
 ### Error Responses
 
 **400 Bad Request**
-```json
+
+```
 {
   "detail": "Invalid request parameters"
 }
 ```
 
 **422 Validation Error**
-```json
+
+```
 {
   "detail": [
     {
@@ -155,7 +163,8 @@ This endpoint provides detailed analysis of data completeness including:
 ```
 
 **500 Internal Server Error**
-```json
+
+```
 {
   "detail": "Analysis failed: Database connection error"
 }
@@ -165,7 +174,7 @@ This endpoint provides detailed analysis of data completeness including:
 
 ### Basic Completeness Analysis
 
-```bash
+```
 curl -X POST "http://localhost:8002/data-analysis/completeness" \
   -H "Content-Type: application/json" \
   -d '{
@@ -178,7 +187,7 @@ curl -X POST "http://localhost:8002/data-analysis/completeness" \
 
 ### Detailed Analysis with Gap Filling
 
-```bash
+```
 curl -X POST "http://localhost:8002/data-analysis/completeness" \
   -H "Content-Type: application/json" \
   -d '{
@@ -193,8 +202,8 @@ curl -X POST "http://localhost:8002/data-analysis/completeness" \
 
 ## Integration Notes
 
-- This endpoint was moved from `/nightly-update/data-completeness` to provide better API organization
-- The functionality remains identical to the previous implementation
-- Frontend applications should update their API calls to use the new endpoint
-- The endpoint supports both basic analysis and advanced gap-filling capabilities
-- Gap filling requires valid API credentials for the configured data provider
+*   This endpoint was moved from `/nightly-update/data-completeness` to provide better API organization
+*   The functionality remains identical to the previous implementation
+*   Frontend applications should update their API calls to use the new endpoint
+*   The endpoint supports both basic analysis and advanced gap-filling capabilities
+*   Gap filling requires valid API credentials for the configured data provider

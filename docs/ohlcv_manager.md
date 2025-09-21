@@ -17,39 +17,40 @@ The OHLCV Manager orchestrates several key components to provide reliable tradin
 
 ### Core Components
 
-1. **Data Providers** (`services/data_providers/`)
+**Data Providers** (`services/data_providers/`)
 
-   - Vendor-agnostic interface for multiple data sources
-   - Polygon.io client with intelligent batching and rate limiting
-   - Support for Financial Modeling Prep and Tiingo
-   - Automatic retry mechanisms and error handling
+- Vendor-agnostic interface for multiple data sources
+- Polygon.io client with intelligent batching and rate limiting
+- Support for Financial Modeling Prep and Tiingo
+- Automatic retry mechanisms and error handling
 
-2. **Storage Service** (`services/storage/data_storage_service.py`)
+**Storage Service** (`services/storage/data_storage_service.py`)
 
-   - Partitioned Parquet file storage: `storage/candles/timeframe/symbol/date.parquet`
-   - Efficient pagination and data retrieval
-   - Automatic deduplication and data merging
-   - Optimized last update date detection
+- Partitioned Parquet file storage: `storage/candles/timeframe/symbol/date.parquet`
+- Efficient pagination and data retrieval
+- Automatic deduplication and data merging
+- Optimized last update date detection
 
-3. **Resampling Service** (`services/storage/data_resampling_service.py`)
+**Resampling Service** (`services/storage/data_resampling_service.py`)
 
-   - Asset-type-aware resampling strategies
-   - Pandas-based OHLCV aggregation
-   - Market session alignment for different asset classes
-   - Bulk resampling capabilities
+- Asset-type-aware resampling strategies
+- Pandas-based OHLCV aggregation
+- Market session alignment for different asset classes
+- Bulk resampling capabilities
 
-4. **Validation Service** (`services/validation/stock_market_validation_service.py`)
+**Validation Service** (`services/validation/stock_market_validation_service.py`)
 
-   - Trading day validation using market calendars
-   - Data completeness analysis
-   - Gap detection and reporting
-   - Market hours and holiday handling
+- Trading day validation using market calendars
+- Data completeness analysis
+- Gap detection and reporting
+- Market hours and holiday handling
 
-5. **Workflow Services** (`services/workflows/`)
-   - Orchestrated nightly update processes
-   - Multi-symbol concurrent processing
-   - Progress tracking and status reporting
-   - Error handling and recovery
+**Workflow Services** (`services/workflows/`)
+
+- Orchestrated nightly update processes
+- Multi-symbol concurrent processing
+- Progress tracking and status reporting
+- Error handling and recovery
 
 ## API Endpoints
 
@@ -57,7 +58,7 @@ The OHLCV Manager orchestrates several key components to provide reliable tradin
 
 #### Get Trading Data
 
-```http
+```
 GET /trading-data/data/{symbol}
 ```
 
@@ -76,7 +77,7 @@ Retrieve stored trading data for a symbol with pagination support.
 
 **Response:**
 
-```json
+```
 {
   "symbol": "AAPL",
   "timeframe": "1min",
@@ -105,7 +106,7 @@ Retrieve stored trading data for a symbol with pagination support.
 
 #### List Stored Symbols
 
-```http
+```
 GET /trading-data/symbols
 ```
 
@@ -117,7 +118,7 @@ List all symbols that have stored data.
 
 **Response:**
 
-```json
+```
 ["AAPL", "GOOGL", "MSFT", "TSLA"]
 ```
 
@@ -125,7 +126,7 @@ List all symbols that have stored data.
 
 #### Start Nightly Update
 
-```http
+```
 POST /nightly-update/start
 ```
 
@@ -133,7 +134,7 @@ Trigger the complete nightly update workflow for stock market data.
 
 **Request Body:**
 
-```json
+```
 {
   "symbols": ["AAPL", "GOOGL", "MSFT"], // Optional, uses default if null
   "start_date": "2024-01-01", // Optional override
@@ -146,7 +147,7 @@ Trigger the complete nightly update workflow for stock market data.
 
 **Response:**
 
-```json
+```
 {
   "request_id": "550e8400-e29b-41d4-a716-446655440000",
   "status": "started",
@@ -156,7 +157,7 @@ Trigger the complete nightly update workflow for stock market data.
 
 #### Get Update Status
 
-```http
+```
 GET /nightly-update/status/{request_id}
 ```
 
@@ -164,7 +165,7 @@ Get detailed status and progress information for a nightly update request.
 
 **Response:**
 
-```json
+```
 {
   "request_id": "550e8400-e29b-41d4-a716-446655440000",
   "status": "in_progress",
@@ -185,7 +186,7 @@ Get detailed status and progress information for a nightly update request.
 
 #### Get Progress Details
 
-```http
+```
 GET /nightly-update/status/{request_id}/progress
 ```
 
@@ -193,7 +194,7 @@ Get detailed progress information for each symbol in the update.
 
 #### Get Update Results
 
-```http
+```
 GET /nightly-update/status/{request_id}/details
 ```
 
@@ -201,7 +202,7 @@ Get complete results of a finished nightly update.
 
 #### List Active Updates
 
-```http
+```
 GET /nightly-update/active
 ```
 
@@ -211,7 +212,7 @@ List all currently running nightly update requests.
 
 #### Analyze Data Completeness
 
-```http
+```
 POST /data-analysis/completeness
 ```
 
@@ -219,7 +220,7 @@ Analyze data completeness for specified symbols and date range.
 
 **Request Body:**
 
-```json
+```
 {
   "symbols": ["AAPL", "GOOGL"],
   "start_date": "2024-01-01",
@@ -232,7 +233,7 @@ Analyze data completeness for specified symbols and date range.
 
 **Response:**
 
-```json
+```
 {
   "analysis_period": {
     "start_date": "2024-01-01",
@@ -375,7 +376,7 @@ The system uses asset-type-aware resampling to match external provider aggregati
 - **Per-symbol analysis**: Individual symbol data quality metrics
 - **Gap detection**: Identifies missing time periods
 - **Completeness percentage**: Actual vs expected candle counts
-- **Quality thresholds**: Flags symbols with <95% completeness
+- **Quality thresholds**: Flags symbols with \<95% completeness
 - **Recommendations**: Automated suggestions for data improvement
 
 ### Gap Filling
@@ -391,28 +392,29 @@ The nightly update process ensures data currency through automated workflows:
 
 ### Process Steps
 
-1. **Validation Phase**
+**Validation Phase**
 
-   - Check existing data completeness
-   - Identify symbols needing updates
-   - Determine date ranges for updates
+- Check existing data completeness
+- Identify symbols needing updates
+- Determine date ranges for updates
 
-2. **Data Fetching Phase**
+**Data Fetching Phase**
 
-   - Download missing 1-minute data from providers
-   - Handle rate limiting and retries
-   - Validate and store new data
+- Download missing 1-minute data from providers
+- Handle rate limiting and retries
+- Validate and store new data
 
-3. **Resampling Phase**
+**Resampling Phase**
 
-   - Generate all target timeframes from 1-minute data
-   - Apply asset-type-aware resampling strategies
-   - Store resampled data in appropriate partitions
+- Generate all target timeframes from 1-minute data
+- Apply asset-type-aware resampling strategies
+- Store resampled data in appropriate partitions
 
-4. **Reporting Phase**
-   - Generate update summaries
-   - Report success/failure statistics
-   - Provide recommendations for data quality
+**Reporting Phase**
+
+- Generate update summaries
+- Report success/failure statistics
+- Provide recommendations for data quality
 
 ### Concurrency and Performance
 
