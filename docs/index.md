@@ -101,11 +101,14 @@ ng lint                 # Linting
 
 ### Local Documentation
 
-- **Data Management Guide**: [`docs/ohlcv_manager.md`](docs/ohlcv_manager.md) - Comprehensive data management documentation
-- **API Documentation**: [`docs/data analysis.md`](docs/data%20analysis.md) & [`docs/nightly update.md`](docs/nightly%20update.md) - API endpoint details
+- **Data Management Guide:** [`./ohlcv_manager.md`](./ohlcv_manager.md)
+- **API Documentation:** [`./data-analysis.md`](./data-analysis.md) & [`./nightly-update.md`](./nightly-update.md)
+
+endpoint details
+
 - **Backend API**: `http://localhost:8002/docs` (when running) - Interactive API documentation
-- **Frontend Guide**: [`frontend/README.md`](frontend/README.md) - Angular application setup
-- **Backend Guide**: [`backend/README.md`](backend/README.md) - FastAPI backend setup
+- Frontend Guide: https://github.com/simutrador/simutrador-data-manager/tree/main/frontend
+- Backend Guide: https://github.com/simutrador/simutrador-data-manager/tree/main/backend
 
 ### Project-Wide Documentation
 
