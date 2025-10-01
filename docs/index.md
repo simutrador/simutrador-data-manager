@@ -9,7 +9,7 @@ FastAPI backend and Angular frontend providing data ingestion, storage, validati
 - Project Overview (architecture): https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/main.md
 - WebSocket API v2 (central spec): https://github.com/simutrador/simutrador-docs/blob/main/SimuTrador/simutrador-server/ws_api_v2.md
 - Core Models (shared library): https://github.com/simutrador/simutrador-core
-- API Docs (this repo): docs/ohlcv_manager.md, docs/nightly%20update.md, docs/data%20analysis.md
+- API Docs (this repo): docs/ohlcv-manager.md, docs/nightly-update.md, docs/data-analysis.md
 - Backend Guide: backend/README.md
 - Frontend Guide: frontend/README.md
 - AI Index (agent entry): ai-index.md
@@ -101,7 +101,7 @@ ng lint                 # Linting
 
 ### Local Documentation
 
-- **Data Management Guide:** [`./ohlcv_manager.md`](./ohlcv_manager.md)
+- **Data Management Guide:** [`./ohlcv-manager.md`](./ohlcv-manager.md)
 - **API Documentation:** [`./data-analysis.md`](./data-analysis.md) & [`./nightly-update.md`](./nightly-update.md)
 
 endpoint details
