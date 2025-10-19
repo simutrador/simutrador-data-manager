@@ -9,7 +9,9 @@ A stateless execution engine designed to simulate the execution of trading order
 uv sync
 
 # Run development server
-uv run fastapi dev src/main.py
+cd backend/src
+/Users/ck/Projects/simutrador/simutrador-data-manager/backend/.venv/bin/python \
+  -m uvicorn main:app --reload --host 127.0.0.1 --port 8002
 
 # Access the API
 # - Main API: http://localhost:8002

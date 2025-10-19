@@ -1,2 +1,6 @@
 .DS_Store
 backend/.vscode/*
+.augment/rules/rules.md
+backend/src/logs/*
+backend/logs/*
+.augment/rules/rules.md
