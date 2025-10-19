@@ -138,7 +138,7 @@ class TestPolygonClient:
                 await polygon_client.fetch_trades_data("AAPL", start_time, end_time)
 
     def test_trades_timestamp_conversion(
-        self, _polygon_client: PolygonClient  # noqa: ARG002
+        self, polygon_client: PolygonClient  # noqa: ARG002
     ) -> None:
         """Test that nanosecond timestamps are properly converted."""
         # Test timestamp conversion logic
