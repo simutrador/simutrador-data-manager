@@ -18,7 +18,7 @@ import os
 from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -73,7 +73,7 @@ class TestNightlyUpdatePaidAPI:
         end_date = date(2025, 1, 10)  # Friday
         start_date = date(2025, 1, 8)  # Wednesday - 3 trading days
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL"],
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
@@ -177,7 +177,7 @@ class TestNightlyUpdatePaidAPI:
         end_date = date(2025, 1, 10)  # Friday
         start_date = date(2025, 1, 8)  # Wednesday
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL", "MSFT"],
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
@@ -286,7 +286,7 @@ class TestNightlyUpdatePaidAPI:
         end_date = date(2025, 1, 10)  # Friday
         start_date = date(2025, 1, 9)  # Thursday
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL", "INVALID_SYMBOL_12345"],  # Mix of valid and invalid
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
@@ -398,14 +398,14 @@ class TestTradingDataCompleteEndToEndPipeline:
         return DataStorageService()
 
     def _get_expected_storage_paths(
-        self, symbol: str, timeframes: List[str], test_dates: List[date]
-    ) -> Dict[str, List[Path]]:
+        self, symbol: str, timeframes: list[str], test_dates: list[date]
+    ) -> dict[str, list[Path]]:
         """Get expected storage file paths for validation."""
         settings = get_settings()
         base_path = Path(settings.data_storage.base_path)
         candles_path = base_path / settings.data_storage.candles_path
 
-        expected_paths: Dict[str, List[Path]] = {}
+        expected_paths: dict[str, list[Path]] = {}
 
         for timeframe in timeframes:
             expected_paths[timeframe] = []
@@ -426,7 +426,7 @@ class TestTradingDataCompleteEndToEndPipeline:
         return expected_paths
 
     def _validate_storage_structure(
-        self, symbol: str, timeframes: List[str], test_dates: List[date]
+        self, symbol: str, timeframes: list[str], test_dates: list[date]
     ) -> None:
         """Validate that files are stored in correct directory structure."""
         expected_paths = self._get_expected_storage_paths(
@@ -442,15 +442,15 @@ class TestTradingDataCompleteEndToEndPipeline:
 
     def _compare_candles(
         self,
-        our_candles: List[PriceCandle],
-        vendor_candles: List[PriceCandle],
+        our_candles: list[PriceCandle],
+        vendor_candles: list[PriceCandle],
         tolerance: Decimal = Decimal("0.01"),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Compare our resampled candles with vendor's native candles."""
         # Create timestamp-based lookup for vendor candles
         vendor_by_timestamp = {candle.date: candle for candle in vendor_candles}
 
-        results: Dict[str, Any] = {
+        results: dict[str, Any] = {
             "total_our_candles": len(our_candles),
             "total_vendor_candles": len(vendor_candles),
             "common_timestamps": 0,
@@ -534,7 +534,7 @@ class TestTradingDataCompleteEndToEndPipeline:
         start_date = date(2025, 1, 13)  # Monday
         end_date = date(2025, 1, 15)  # Wednesday
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": [symbol],
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
@@ -598,7 +598,7 @@ class TestTradingDataCompleteEndToEndPipeline:
         ]
 
         # Generate expected test dates (trading days only)
-        test_dates: List[date] = []
+        test_dates: list[date] = []
         current_date = start_date
         while current_date <= end_date:
             # Include weekdays only (Monday=0 to Friday=4)
@@ -614,7 +614,7 @@ class TestTradingDataCompleteEndToEndPipeline:
         )
 
         # Step 1: Download 1min data
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": [symbol],
             "timeframes": ["1min"],  # Download 1min data first
             "start_date": start_date.isoformat(),
@@ -653,7 +653,7 @@ class TestTradingDataCompleteEndToEndPipeline:
 
         for target_timeframe in resampling_timeframes:
             print(f"  📊 Resampling 1min → {target_timeframe}...")
-            resample_request: Dict[str, Any] = {
+            resample_request: dict[str, Any] = {
                 "symbols": [symbol],
                 "from_timeframe": "1min",
                 "to_timeframe": target_timeframe,
@@ -720,7 +720,7 @@ class TestTradingDataCompleteEndToEndPipeline:
         print(f"📅 Period: {start_date} to {end_date}")
 
         # Step 1: Download 1min data and let system resample it using nightly update API
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": [symbol],
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
@@ -900,7 +900,7 @@ class TestTradingDataDebug:
         💰 Debug test to check API configuration and basic connectivity.
         """
         # Simple connectivity test using nightly update API
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL"],
             "start_date": (date.today() - timedelta(days=1)).isoformat(),
             "end_date": date.today().isoformat(),
@@ -947,7 +947,7 @@ class TestTradingDataDebug:
         print(f"📁 Storage candles path: {settings.data_storage.candles_path}")
 
         # Test with daily data first (more reliable)
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL"],
             "timeframes": ["daily"],  # Try daily instead of 1min
             "start_date": "2025-01-02",  # Start of January
@@ -1002,7 +1002,7 @@ class TestTradingDataDebug:
         for start_date, end_date in test_ranges:
             print(f"🗓️ Testing date range: {start_date} to {end_date}")
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "start_date": start_date.isoformat(),
                 "end_date": end_date.isoformat(),
@@ -1047,7 +1047,7 @@ class TestTradingDataDebug:
         for test_case in test_cases:
             print(f"\n📅 Testing: {test_case['name']}")
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "timeframes": ["1min"],
                 "start_date": test_case["start_date"],
@@ -1076,7 +1076,7 @@ class TestTradingDataDebug:
         💰 Debug test to check data provider directly.
         """
         # Test data provider connectivity through nightly update API
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL"],
             "start_date": (date.today() - timedelta(days=2)).isoformat(),
             "end_date": (date.today() - timedelta(days=1)).isoformat(),

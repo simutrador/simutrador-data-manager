@@ -10,7 +10,6 @@ This module tests the validation of stock market data including:
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import List
 from unittest.mock import Mock, patch
 
 import pytest
@@ -45,9 +44,9 @@ class TestStockMarketValidationService:
         return service
 
     @pytest.fixture
-    def sample_trading_day_candles(self) -> List[PriceCandle]:
+    def sample_trading_day_candles(self) -> list[PriceCandle]:
         """Create sample 1-minute candles for a full trading day (390 candles)."""
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         base_date = datetime(2025, 1, 15, 13, 30)  # 9:30 AM ET = 13:30 UTC
 
         for i in range(390):  # Full trading day
@@ -67,9 +66,9 @@ class TestStockMarketValidationService:
         return candles
 
     @pytest.fixture
-    def incomplete_trading_day_candles(self) -> List[PriceCandle]:
+    def incomplete_trading_day_candles(self) -> list[PriceCandle]:
         """Create sample candles for an incomplete trading day (missing some periods)."""
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         base_date = datetime(2025, 1, 15, 13, 30)  # 9:30 AM ET = 13:30 UTC
 
         # Create only 300 candles instead of 390 (missing 90 minutes)
@@ -151,7 +150,7 @@ class TestStockMarketValidationService:
         self,
         mock_storage_class: Mock,
         validation_service: StockMarketValidationService,
-        sample_trading_day_candles: List[PriceCandle],
+        sample_trading_day_candles: list[PriceCandle],
     ) -> None:
         """Test validation of complete trading day data."""
         # Mock storage service
@@ -190,7 +189,7 @@ class TestStockMarketValidationService:
         self,
         mock_storage_class: Mock,
         validation_service: StockMarketValidationService,
-        incomplete_trading_day_candles: List[PriceCandle],
+        incomplete_trading_day_candles: list[PriceCandle],
     ) -> None:
         """Test validation of incomplete trading day data."""
         # Mock storage service

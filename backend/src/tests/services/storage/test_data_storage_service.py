@@ -4,10 +4,10 @@ Tests for the DataStorageService.
 
 import sys
 import tempfile
-from datetime import date, datetime, timedelta, timezone
+from collections.abc import Generator
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Generator, List
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -47,7 +47,7 @@ class TestDataStorageService:
             return service
 
     @pytest.fixture
-    def sample_candles(self) -> List[PriceCandle]:
+    def sample_candles(self) -> list[PriceCandle]:
         """Create sample price candles for testing."""
         return [
             PriceCandle(
@@ -69,7 +69,7 @@ class TestDataStorageService:
         ]
 
     @pytest.fixture
-    def sample_series(self, sample_candles: List[PriceCandle]) -> PriceDataSeries:
+    def sample_series(self, sample_candles: list[PriceCandle]) -> PriceDataSeries:
         """Create a sample price data series."""
         return PriceDataSeries(
             symbol="AAPL", timeframe=Timeframe.ONE_MIN, candles=sample_candles
@@ -187,7 +187,7 @@ class TestDataStorageService:
 
         for day in range(10):
             current_date = base_date + timedelta(days=day)
-            candles: List[PriceCandle] = []
+            candles: list[PriceCandle] = []
 
             # Create 390 candles per day (6.5 hours * 60 minutes)
             for minute in range(390):
@@ -263,7 +263,7 @@ class TestDataStorageService:
         assert "AAPL" in symbols
 
     def test_data_deduplication(
-        self, storage_service: DataStorageService, sample_candles: List[PriceCandle]
+        self, storage_service: DataStorageService, sample_candles: list[PriceCandle]
     ):
         """Test that duplicate data is properly handled."""
         # Create series with duplicate candles
@@ -294,8 +294,8 @@ class TestDataStorageService:
     ):
         """Test pagination functionality with limit and offset parameters."""
         # Create test data with multiple days
-        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=timezone.utc)
-        all_candles: List[PriceCandle] = []
+        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=UTC)
+        all_candles: list[PriceCandle] = []
 
         # Create 100 candles across 2 days (50 each day)
         for day in range(2):
@@ -360,8 +360,8 @@ class TestDataStorageService:
     ):
         """Test pagination with descending order (newest first)."""
         # Create test data
-        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=timezone.utc)
-        candles: List[PriceCandle] = []
+        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=UTC)
+        candles: list[PriceCandle] = []
 
         for minute in range(20):
             candle_time = base_date + timedelta(minutes=minute)
@@ -393,8 +393,8 @@ class TestDataStorageService:
     def test_get_total_count_method(self, storage_service: DataStorageService):
         """Test the get_total_count method for efficient counting."""
         # Create test data
-        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=timezone.utc)
-        candles: List[PriceCandle] = []
+        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=UTC)
+        candles: list[PriceCandle] = []
 
         for minute in range(50):
             candle_time = base_date + timedelta(minutes=minute)
@@ -428,8 +428,8 @@ class TestDataStorageService:
     def test_pagination_with_date_filters(self, storage_service: DataStorageService):
         """Test pagination combined with date filtering."""
         # Create test data across multiple days
-        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=timezone.utc)
-        candles: List[PriceCandle] = []
+        base_date = datetime(2025, 7, 1, 9, 30, tzinfo=UTC)
+        candles: list[PriceCandle] = []
 
         # Create 30 candles per day for 3 days (90 total)
         for day in range(3):

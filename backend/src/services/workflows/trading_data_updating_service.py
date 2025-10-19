@@ -9,7 +9,6 @@ This service orchestrates the fetching and storing of trading data:
 """
 
 from datetime import date, datetime, timedelta
-from typing import Dict, List, Optional
 
 from simutrador_core.models.price_data import DataUpdateStatus
 from simutrador_core.utils import get_default_logger
@@ -48,11 +47,11 @@ class TradingDataUpdatingService:
     async def update_symbol_data(
         self,
         symbol: str,
-        timeframes: Optional[List[str]] = None,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        timeframes: list[str] | None = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
         force_update: bool = False,
-    ) -> List[DataUpdateStatus]:
+    ) -> list[DataUpdateStatus]:
         """
         Update data for a single symbol.
 
@@ -101,7 +100,7 @@ class TradingDataUpdatingService:
         client: DataProviderInterface,
         symbol: str,
         timeframe: str,
-        start_date: Optional[date],
+        start_date: date | None,
         end_date: date,
         force_update: bool,
     ) -> DataUpdateStatus:
@@ -199,8 +198,8 @@ class TradingDataUpdatingService:
             )
 
     def get_update_status(
-        self, symbols: List[str], timeframes: Optional[List[str]] = None
-    ) -> Dict[str, Dict[str, Optional[datetime]]]:
+        self, symbols: list[str], timeframes: list[str] | None = None
+    ) -> dict[str, dict[str, datetime | None]]:
         """
         Get the last update status for multiple symbols and timeframes.
 
@@ -225,7 +224,7 @@ class TradingDataUpdatingService:
 
         return status  # type: ignore[reportUnknownVariableType]
 
-    def get_stored_symbols(self, timeframe: str = "1min") -> List[str]:
+    def get_stored_symbols(self, timeframe: str = "1min") -> list[str]:
         """
         Get list of symbols that have stored data.
 

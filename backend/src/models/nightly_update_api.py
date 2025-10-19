@@ -8,12 +8,12 @@ including detailed status tracking, validation results, and error reporting.
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
 # Type alias to avoid forward reference issues
-GapFillResultList = List["GapFillResult"]
+GapFillResultList = list["GapFillResult"]
 
 
 class ProgressInfo(BaseModel):
@@ -21,17 +21,17 @@ class ProgressInfo(BaseModel):
 
     total_symbols: int = Field(..., description="Total number of symbols to process")
     completed_symbols: int = Field(..., description="Number of symbols completed")
-    current_symbol: Optional[str] = Field(
+    current_symbol: str | None = Field(
         default=None, description="Currently processing symbol"
     )
     current_step: str = Field(..., description="Current processing step")
     progress_percentage: float = Field(
         ..., ge=0, le=100, description="Overall progress percentage"
     )
-    estimated_time_remaining_seconds: Optional[int] = Field(
+    estimated_time_remaining_seconds: int | None = Field(
         default=None, description="Estimated time remaining in seconds"
     )
-    symbols_in_progress: List[str] = Field(
+    symbols_in_progress: list[str] = Field(
         default_factory=list, description="List of symbols currently being processed"
     )
 
@@ -49,13 +49,13 @@ class SymbolProgress(BaseModel):
         ..., ge=0, le=100, description="Symbol progress percentage"
     )
     current_step: str = Field(..., description="Current processing step")
-    error_message: Optional[str] = Field(
+    error_message: str | None = Field(
         default=None, description="Error message if failed"
     )
-    started_at: Optional[datetime] = Field(
+    started_at: datetime | None = Field(
         default=None, description="When processing started"
     )
-    completed_at: Optional[datetime] = Field(
+    completed_at: datetime | None = Field(
         default=None, description="When processing completed"
     )
 
@@ -63,14 +63,14 @@ class SymbolProgress(BaseModel):
 class ActiveUpdateInfo(BaseModel):
     """Information about an active nightly update request."""
 
-    request: "NightlyUpdateRequest" = Field(..., description="Original update request")
+    request: NightlyUpdateRequest = Field(..., description="Original update request")
     started_at: datetime = Field(..., description="When the update was started")
     status: str = Field(
         ...,
         description="Current status (starting, running, failed)",
     )
-    symbols: List[str] = Field(..., description="List of symbols being processed")
-    error: Optional[str] = Field(
+    symbols: list[str] = Field(..., description="List of symbols being processed")
+    error: str | None = Field(
         default=None, description="Error message if update failed"
     )
 
@@ -78,7 +78,7 @@ class ActiveUpdateInfo(BaseModel):
 class NightlyUpdateRequest(BaseModel):
     """Request model for nightly update endpoint."""
 
-    symbols: Optional[List[str]] = Field(
+    symbols: list[str] | None = Field(
         None,
         description=(
             "Optional list of symbols to update. If not provided, "
@@ -88,7 +88,7 @@ class NightlyUpdateRequest(BaseModel):
     force_validation: bool = Field(
         default=True, description="Whether to validate existing data before updating"
     )
-    max_concurrent: Optional[int] = Field(
+    max_concurrent: int | None = Field(
         None,
         gt=0,
         description=(
@@ -100,14 +100,14 @@ class NightlyUpdateRequest(BaseModel):
         default=True,
         description="Whether to automatically resample to other timeframes after 1min update",
     )
-    start_date: Optional[date] = Field(
+    start_date: date | None = Field(
         None,
         description=(
             "Optional start date for the update range. If not provided, "
             "automatically determines based on last update date"
         ),
     )
-    end_date: Optional[date] = Field(
+    end_date: date | None = Field(
         None,
         description=(
             "Optional end date for the update range. If not provided, "
@@ -127,18 +127,18 @@ class GapFillResult(BaseModel):
     vendor_unavailable: bool = Field(
         default=False, description="Whether data is unavailable from vendor"
     )
-    polygon_api_url: Optional[str] = Field(
+    polygon_api_url: str | None = Field(
         default=None, description="Polygon API URL used for this gap-filling attempt"
     )
-    trades_api_url: Optional[str] = Field(
+    trades_api_url: str | None = Field(
         default=None,
         description="Polygon Trades API URL used to check trading activity",
     )
-    has_trading_activity: Optional[bool] = Field(
+    has_trading_activity: bool | None = Field(
         default=None,
         description="Whether trading activity was detected during the gap period",
     )
-    error_message: Optional[str] = Field(
+    error_message: str | None = Field(
         default=None, description="Error message if gap filling failed"
     )
 
@@ -156,7 +156,7 @@ class SymbolCompletenessRawData(BaseModel):
     total_expected_candles: int = Field(..., description="Total expected candles")
     total_actual_candles: int = Field(..., description="Total actual candles found")
     missing_candles: int = Field(..., description="Number of missing candles")
-    validation_results: List[Any] = Field(
+    validation_results: list[Any] = Field(
         ..., description="List of ValidationResult objects"
     )
 
@@ -195,7 +195,7 @@ class SymbolCompletenessRawData(BaseModel):
     )
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "SymbolCompletenessRawData":
+    def from_dict(cls, data: dict[str, Any]) -> SymbolCompletenessRawData:
         """Create instance from dictionary with safe field access."""
         return cls(
             total_trading_days=data["total_trading_days"],
@@ -238,7 +238,7 @@ class ValidationResultModel(BaseModel):
     is_half_day: bool = Field(
         default=False, description="Whether this is a half trading day"
     )
-    missing_periods: List[str] = Field(
+    missing_periods: list[str] = Field(
         default_factory=list,
         description="List of missing time periods (formatted as strings)",
     )
@@ -248,17 +248,17 @@ class ValidationResultModel(BaseModel):
     largest_gap_minutes: int = Field(
         default=0, description="Largest continuous gap in minutes"
     )
-    polygon_urls_for_missing_periods: List[str] = Field(
+    polygon_urls_for_missing_periods: list[str] = Field(
         default_factory=list,
         description="List of Polygon API URLs for each missing period",
     )
     gap_fill_results: GapFillResultList = Field(  # type: ignore
         default_factory=list, description="Results of gap filling attempts"
     )
-    errors: List[str] = Field(
+    errors: list[str] = Field(
         default_factory=list, description="List of validation errors"
     )
-    warnings: List[str] = Field(
+    warnings: list[str] = Field(
         default_factory=list, description="List of validation warnings"
     )
 
@@ -275,20 +275,20 @@ class SymbolUpdateResult(BaseModel):
     candles_updated: int = Field(
         default=0, description="Number of 1-minute candles updated"
     )
-    update_duration_seconds: Optional[float] = Field(
+    update_duration_seconds: float | None = Field(
         None, description="Duration of the update process in seconds"
     )
 
     # Validation results
-    validation_results: List[ValidationResultModel] = Field(  # type: ignore
+    validation_results: list[ValidationResultModel] = Field(  # type: ignore
         default_factory=list, description="Validation results for each trading day"
     )
-    validation_summary: Optional[Dict[str, Any]] = Field(
+    validation_summary: dict[str, Any] | None = Field(
         None, description="Summary of validation results"
     )
 
     # Resampling results
-    resampling_results: Dict[str, int] = Field(
+    resampling_results: dict[str, int] = Field(
         default_factory=dict,
         description="Number of candles created for each resampled timeframe",
     )
@@ -297,10 +297,10 @@ class SymbolUpdateResult(BaseModel):
     )
 
     # Error information
-    error_message: Optional[str] = Field(
+    error_message: str | None = Field(
         None, description="Error message if update failed"
     )
-    warnings: List[str] = Field(
+    warnings: list[str] = Field(
         default_factory=list, description="List of warnings during update"
     )
 
@@ -324,10 +324,10 @@ class NightlyUpdateSummary(BaseModel):
     )
 
     # Date range information
-    earliest_start_date: Optional[date] = Field(
+    earliest_start_date: date | None = Field(
         None, description="Earliest start date across all symbol updates"
     )
-    latest_end_date: Optional[date] = Field(
+    latest_end_date: date | None = Field(
         None, description="Latest end date across all symbol updates"
     )
 
@@ -340,7 +340,7 @@ class NightlyUpdateSummary(BaseModel):
     )
 
     # Resampling summary by timeframe
-    resampling_summary: Dict[str, int] = Field(
+    resampling_summary: dict[str, int] = Field(
         default_factory=dict,
         description="Total candles created per timeframe across all symbols",
     )
@@ -359,15 +359,15 @@ class NightlyUpdateResponse(BaseModel):
         ..., description="Summary of the update operation"
     )
 
-    symbol_results: Dict[str, SymbolUpdateResult] = Field(
+    symbol_results: dict[str, SymbolUpdateResult] = Field(
         ..., description="Detailed results for each symbol"
     )
 
     # Configuration used
-    symbols_requested: Optional[List[str]] = Field(
+    symbols_requested: list[str] | None = Field(
         None, description="Symbols that were requested for update"
     )
-    symbols_processed: List[str] = Field(
+    symbols_processed: list[str] = Field(
         ..., description="Symbols that were actually processed"
     )
     max_concurrent_used: int = Field(
@@ -378,7 +378,7 @@ class NightlyUpdateResponse(BaseModel):
     overall_success: bool = Field(
         ..., description="Whether the overall operation was successful"
     )
-    global_errors: List[str] = Field(
+    global_errors: list[str] = Field(
         default_factory=list,
         description="Global errors that affected the entire operation",
     )
@@ -387,10 +387,10 @@ class NightlyUpdateResponse(BaseModel):
 class NightlyUpdateStatusRequest(BaseModel):
     """Request model for checking nightly update status."""
 
-    request_id: Optional[str] = Field(
+    request_id: str | None = Field(
         None, description="Request ID to check status for"
     )
-    symbols: Optional[List[str]] = Field(
+    symbols: list[str] | None = Field(
         None, description="Symbols to check status for"
     )
     include_validation_details: bool = Field(
@@ -409,13 +409,13 @@ class UpdateStatusResponse(BaseModel):
     )
     is_complete: bool = Field(..., description="Whether the update is complete")
     progress: ProgressInfo = Field(..., description="Progress information")
-    completed_at: Optional[datetime] = Field(
+    completed_at: datetime | None = Field(
         None, description="When the update completed (only for completed updates)"
     )
-    summary: Optional[NightlyUpdateSummary] = Field(
+    summary: NightlyUpdateSummary | None = Field(
         None, description="Summary information (only for completed updates)"
     )
-    overall_success: Optional[bool] = Field(
+    overall_success: bool | None = Field(
         None, description="Overall success status (only for completed updates)"
     )
 
@@ -427,7 +427,7 @@ class UpdateProgressDetailsResponse(BaseModel):
     overall_progress: ProgressInfo = Field(
         ..., description="Overall progress information"
     )
-    symbol_progress: Dict[str, SymbolProgress] = Field(
+    symbol_progress: dict[str, SymbolProgress] = Field(
         ..., description="Progress information for each symbol"
     )
 
@@ -449,16 +449,16 @@ class ActiveUpdateSummary(BaseModel):
 class NightlyUpdateStatusResponse(BaseModel):
     """Response model for nightly update status check."""
 
-    symbols_status: Dict[str, Dict[str, Any]] = Field(
+    symbols_status: dict[str, dict[str, Any]] = Field(
         ..., description="Status information for each symbol"
     )
-    last_successful_update: Optional[datetime] = Field(
+    last_successful_update: datetime | None = Field(
         None, description="Timestamp of last successful nightly update"
     )
-    next_scheduled_update: Optional[datetime] = Field(
+    next_scheduled_update: datetime | None = Field(
         None, description="Timestamp of next scheduled update (if applicable)"
     )
-    system_health: Dict[str, Any] = Field(
+    system_health: dict[str, Any] = Field(
         default_factory=dict, description="Overall system health indicators"
     )
 
@@ -508,7 +508,7 @@ class SymbolCompletenessData(BaseModel):
         default=0.0, description="Best single day completeness percentage"
     )
 
-    validation_results: Optional[List[ValidationResultModel]] = Field(
+    validation_results: list[ValidationResultModel] | None = Field(
         None, description="Detailed validation results (if requested)"
     )
 
@@ -555,7 +555,7 @@ class OverallStatistics(BaseModel):
 class DataCompletenessRequest(BaseModel):
     """Request model for data completeness analysis."""
 
-    symbols: List[str] = Field(..., min_length=1, description="Symbols to analyze")
+    symbols: list[str] = Field(..., min_length=1, description="Symbols to analyze")
     start_date: date = Field(..., description="Start date for analysis")
     end_date: date = Field(..., description="End date for analysis")
     include_details: bool = Field(
@@ -576,7 +576,7 @@ class DataCompletenessResponse(BaseModel):
         ..., description="Start and end dates of the analysis"
     )
 
-    symbol_completeness: Dict[str, SymbolCompletenessData] = Field(
+    symbol_completeness: dict[str, SymbolCompletenessData] = Field(
         ..., description="Completeness statistics for each symbol"
     )
 
@@ -584,12 +584,12 @@ class DataCompletenessResponse(BaseModel):
         ..., description="Overall completeness statistics"
     )
 
-    symbols_needing_attention: List[str] = Field(
+    symbols_needing_attention: list[str] = Field(
         default_factory=list,
         description="Symbols that need immediate attention due to data issues",
     )
 
-    recommendations: List[str] = Field(
+    recommendations: list[str] = Field(
         default_factory=list,
         description="Recommendations for improving data completeness",
     )

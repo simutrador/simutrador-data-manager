@@ -6,8 +6,7 @@ to data providers for specific time periods where gaps are detected.
 """
 
 import logging
-from datetime import date, datetime, timedelta, timezone
-from typing import Dict, List, Tuple, Union
+from datetime import UTC, date, datetime, timedelta
 
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
 
@@ -26,8 +25,8 @@ logger = logging.getLogger(__name__)
 
 
 # Type definitions for Polygon API responses
-PolygonCandle = Dict[str, Union[int, float]]
-PolygonApiResponse = Dict[str, Union[str, List[PolygonCandle], int]]
+PolygonCandle = dict[str, int | float]
+PolygonApiResponse = dict[str, str | list[PolygonCandle] | int]
 
 
 class GapFillingService:
@@ -43,9 +42,9 @@ class GapFillingService:
     async def fill_gaps_for_periods(
         self,
         symbol: str,
-        missing_periods: List[Tuple[datetime, datetime]],
+        missing_periods: list[tuple[datetime, datetime]],
         max_attempts: int = 50,
-    ) -> List[GapFillResult]:
+    ) -> list[GapFillResult]:
         """
         Attempt to fill gaps for specific missing periods.
 
@@ -57,7 +56,7 @@ class GapFillingService:
         Returns:
             List of GapFillResult objects with results of gap filling attempts
         """
-        results: List[GapFillResult] = []
+        results: list[GapFillResult] = []
 
         # Limit the number of attempts to prevent excessive API calls
         periods_to_process = missing_periods[:max_attempts]
@@ -76,7 +75,7 @@ class GapFillingService:
 
     async def _check_trading_activity(
         self, symbol: str, start_time: datetime, end_time: datetime
-    ) -> Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """
         Check if there was any trading activity during the gap period using trades endpoint.
 
@@ -259,7 +258,7 @@ class GapFillingService:
                         }
 
             # Convert Polygon response to our PriceCandle format
-            candles: List[PriceCandle] = []
+            candles: list[PriceCandle] = []
             results = polygon_data.get("results")
             if results and isinstance(results, list):
                 for result in results:
@@ -269,10 +268,10 @@ class GapFillingService:
 
                     # Convert timestamp from milliseconds to datetime
                     timestamp = result.get("t")
-                    if not isinstance(timestamp, (int, float)):
+                    if not isinstance(timestamp, int | float):
                         continue
                     candle_time = datetime.fromtimestamp(
-                        timestamp / 1000, tz=timezone.utc
+                        timestamp / 1000, tz=UTC
                     )
 
                     # Extract OHLCV values with type checking
@@ -283,7 +282,7 @@ class GapFillingService:
                     volume_val = result.get("v")
 
                     if not all(
-                        isinstance(val, (int, float))
+                        isinstance(val, int | float)
                         for val in [open_val, high_val, low_val, close_val, volume_val]
                     ):
                         continue
@@ -301,7 +300,7 @@ class GapFillingService:
             logger.info(f"Converted {len(candles)} Polygon results to PriceCandles")
 
             # Filter candles to the exact time range we need
-            relevant_candles: List[PriceCandle] = []
+            relevant_candles: list[PriceCandle] = []
             if candles:
                 logger.info(
                     f"Filtering {len(candles)} candles for time range {start_time} to {end_time}"
@@ -309,7 +308,7 @@ class GapFillingService:
                 for i, candle in enumerate(candles):
                     candle_time = candle.date
                     if candle_time.tzinfo is None:
-                        candle_time = candle_time.replace(tzinfo=timezone.utc)
+                        candle_time = candle_time.replace(tzinfo=UTC)
 
                     # Log first few candles and any that might match our time range
                     if i < 5 or (start_time <= candle_time <= end_time):
@@ -367,7 +366,7 @@ class GapFillingService:
                     )
 
                     # Group candles by date for storage
-                    candles_by_date: Dict[date, List[PriceCandle]] = {}
+                    candles_by_date: dict[date, list[PriceCandle]] = {}
                     for candle in relevant_candles:
                         candle_date = candle.date.date()
                         if candle_date not in candles_by_date:
@@ -386,7 +385,7 @@ class GapFillingService:
                             )
 
                             # Merge with existing candles
-                            all_candles: List[PriceCandle] = (
+                            all_candles: list[PriceCandle] = (
                                 list(existing_series.candles) if existing_series else []
                             )
 
@@ -507,7 +506,7 @@ class GapFillingService:
                         for candle in series.candles:
                             candle_time = candle.date
                             if candle_time.tzinfo is None:
-                                candle_time = candle_time.replace(tzinfo=timezone.utc)
+                                candle_time = candle_time.replace(tzinfo=UTC)
 
                             if start_time <= candle_time < end_time:
                                 total_candles += 1

@@ -7,7 +7,7 @@ This module tests the nightly update API including:
 - Error handling
 """
 
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -45,7 +45,7 @@ class TestNightlyUpdateAPI:
 
     def test_start_nightly_update_default_symbols(self, client: TestClient) -> None:
         """Test starting nightly update with default symbols."""
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "force_validation": True,
             "enable_resampling": True,
         }
@@ -67,7 +67,7 @@ class TestNightlyUpdateAPI:
             mock_service.execute_nightly_update = AsyncMock()
             mock_get_service.return_value = mock_service
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL", "MSFT"],
                 "force_validation": True,
                 "max_concurrent": 3,
@@ -98,7 +98,7 @@ class TestNightlyUpdateAPI:
 
         try:
             # Don't provide symbols so get_default_symbols() will be called
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "force_validation": True,
                 "enable_resampling": True,
             }
@@ -221,7 +221,7 @@ class TestNightlyUpdateAPI:
             mock_service.execute_nightly_update = AsyncMock()
             mock_get_service.return_value = mock_service
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL", "MSFT"],
                 "force_validation": True,
                 "enable_resampling": True,
@@ -251,7 +251,7 @@ class TestNightlyUpdateAPI:
             mock_service.execute_nightly_update = AsyncMock()
             mock_get_service.return_value = mock_service
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "force_validation": True,
                 "enable_resampling": True,
@@ -279,7 +279,7 @@ class TestNightlyUpdateAPI:
             mock_service.execute_nightly_update = AsyncMock()
             mock_get_service.return_value = mock_service
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "force_validation": True,
                 "enable_resampling": True,
@@ -305,7 +305,7 @@ class TestNightlyUpdateAPI:
             mock_get_service.return_value = mock_service
 
             # Test invalid start date format
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "start_date": "invalid-date-format",
                 "end_date": "2025-01-15",
@@ -339,7 +339,7 @@ class TestNightlyUpdateAPI:
             future_start = date.today() + timedelta(days=30)
             future_end = date.today() + timedelta(days=35)
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "start_date": future_start.isoformat(),
                 "end_date": future_end.isoformat(),
@@ -364,7 +364,7 @@ class TestNightlyUpdateAPI:
             mock_get_service.return_value = mock_service
 
             # Test same start and end date
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "start_date": "2025-01-15",
                 "end_date": "2025-01-15",

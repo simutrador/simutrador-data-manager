@@ -7,7 +7,6 @@ This module provides REST API endpoints for:
 """
 
 from datetime import datetime
-from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from simutrador_core.models.price_data import PaginationInfo, PriceDataSeries
@@ -29,9 +28,9 @@ def get_storage_service() -> DataStorageService:
 @router.get("/data/{symbol}", response_model=PriceDataSeries)
 async def get_trading_data(
     symbol: str,
-    timeframe: Optional[str] = Query(default="1min", description="Data timeframe"),
-    start_date: Optional[str] = Query(default=None, description="Start date filter"),
-    end_date: Optional[str] = Query(default=None, description="End date filter"),
+    timeframe: str | None = Query(default="1min", description="Data timeframe"),
+    start_date: str | None = Query(default=None, description="Start date filter"),
+    end_date: str | None = Query(default=None, description="End date filter"),
     order_by: str = Query(default="desc", description="Sort order: 'asc' or 'desc'"),
     page: int = Query(default=1, description="Page number (1-based)", ge=1),
     page_size: int = Query(
@@ -130,11 +129,11 @@ async def get_trading_data(
         )
 
 
-@router.get("/symbols", response_model=List[str])
+@router.get("/symbols", response_model=list[str])
 async def list_stored_symbols(
-    timeframe: Optional[str] = Query(default="1min", description="Timeframe to check"),
+    timeframe: str | None = Query(default="1min", description="Timeframe to check"),
     storage_service: DataStorageService = Depends(get_storage_service),
-) -> List[str]:
+) -> list[str]:
     """
     List all symbols that have stored data.
 

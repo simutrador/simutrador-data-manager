@@ -7,8 +7,8 @@ This module tests the Polygon API client, including:
 - Rate limiting and error handling
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -65,11 +65,11 @@ class TestPolygonClient:
         self, polygon_client: PolygonClient
     ) -> None:
         """Test successful trades data fetching."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         # Mock the trades API response
-        mock_response: Dict[str, Any] = {
+        mock_response: dict[str, Any] = {
             "results": [
                 {
                     "t": 1704117000000000000,  # nanosecond timestamp
@@ -105,11 +105,11 @@ class TestPolygonClient:
         self, polygon_client: PolygonClient
     ) -> None:
         """Test trades data fetching when no trades are found."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         # Mock empty response
-        mock_response: Dict[str, Any] = {
+        mock_response: dict[str, Any] = {
             "results": [],
             "status": "OK",
             "request_id": "test",
@@ -128,8 +128,8 @@ class TestPolygonClient:
     @pytest.mark.asyncio
     async def test_fetch_trades_data_error(self, polygon_client: PolygonClient) -> None:
         """Test trades data fetching error handling."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         with patch.object(
             polygon_client, "_make_trades_request", side_effect=Exception("API Error")
@@ -138,17 +138,17 @@ class TestPolygonClient:
                 await polygon_client.fetch_trades_data("AAPL", start_time, end_time)
 
     def test_trades_timestamp_conversion(
-        self, polygon_client: PolygonClient
-    ) -> None:  # pyright: ignore[reportUnusedParameter]
+        self, _polygon_client: PolygonClient  # noqa: ARG002
+    ) -> None:
         """Test that nanosecond timestamps are properly converted."""
         # Test timestamp conversion logic
         # Use a known timestamp: 2024-01-01 14:30:00 UTC
-        test_datetime = datetime(2024, 1, 1, 14, 30, 0, tzinfo=timezone.utc)
+        test_datetime = datetime(2024, 1, 1, 14, 30, 0, tzinfo=UTC)
         test_timestamp_ns = int(test_datetime.timestamp() * 1_000_000_000)
 
         # Convert back to datetime
         converted_datetime = datetime.fromtimestamp(
-            test_timestamp_ns / 1_000_000_000, tz=timezone.utc
+            test_timestamp_ns / 1_000_000_000, tz=UTC
         )
 
         # Should match the original datetime
@@ -163,8 +163,8 @@ class TestPolygonClient:
         self, polygon_client: PolygonClient
     ) -> None:
         """Test that trades API respects the 50,000 limit."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         # Mock the _make_trades_request to capture the params
         with patch.object(polygon_client, "_make_trades_request") as mock_request:
@@ -218,8 +218,8 @@ class TestPolygonUrlGenerator:
         self, url_generator: PolygonUrlGenerator
     ) -> None:
         """Test trades URL generation for a specific period."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         url = url_generator.generate_trades_url_for_period("AAPL", start_time, end_time)
 
@@ -242,12 +242,12 @@ class TestPolygonUrlGenerator:
         """Test generating multiple trades URLs for missing periods."""
         periods = [
             (
-                datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc),
-                datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc),
+                datetime(2024, 1, 1, 14, 30, tzinfo=UTC),
+                datetime(2024, 1, 1, 15, 30, tzinfo=UTC),
             ),
             (
-                datetime(2024, 1, 2, 14, 30, tzinfo=timezone.utc),
-                datetime(2024, 1, 2, 15, 30, tzinfo=timezone.utc),
+                datetime(2024, 1, 2, 14, 30, tzinfo=UTC),
+                datetime(2024, 1, 2, 15, 30, tzinfo=UTC),
             ),
         ]
 

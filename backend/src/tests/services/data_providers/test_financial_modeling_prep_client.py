@@ -3,10 +3,11 @@ Tests for Financial Modeling Prep API client.
 """
 
 import sys
+from collections.abc import AsyncGenerator
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, List
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import httpx
@@ -34,7 +35,7 @@ def mock_settings() -> MagicMock:
 
 
 @pytest.fixture
-def sample_api_response() -> List[Dict[str, Any]]:
+def sample_api_response() -> list[dict[str, Any]]:
     """Sample API response data."""
     return [
         {
@@ -77,7 +78,7 @@ class TestFinancialModelingPrepClient:
     async def test_successful_data_fetch(
         self,
         client: FinancialModelingPrepClient,
-        sample_api_response: List[Dict[str, Any]],
+        sample_api_response: list[dict[str, Any]],
     ):
         """Test successful data fetching."""
         with patch.object(client.client, "get") as mock_get:
@@ -203,7 +204,7 @@ class TestFinancialModelingPrepClient:
     @pytest.mark.asyncio
     async def test_invalid_candle_data(self, client: FinancialModelingPrepClient):
         """Test handling of invalid candle data."""
-        invalid_response: List[Dict[str, Any]] = [
+        invalid_response: list[dict[str, Any]] = [
             {
                 "date": "2025-07-03 12:59:00",
                 "open": "213.57",
@@ -238,7 +239,7 @@ class TestFinancialModelingPrepClient:
     async def test_timeframe_mapping_intraday(
         self,
         client: FinancialModelingPrepClient,
-        sample_api_response: List[Dict[str, Any]],
+        sample_api_response: list[dict[str, Any]],
     ):
         """Test timeframe mapping to API format for intraday data."""
         with patch.object(client.client, "get") as mock_get:
@@ -257,7 +258,7 @@ class TestFinancialModelingPrepClient:
     @pytest.mark.asyncio
     async def test_daily_data_endpoint(self, client: FinancialModelingPrepClient):
         """Test that daily data uses the correct EOD endpoint."""
-        daily_response: List[Dict[str, Any]] = [
+        daily_response: list[dict[str, Any]] = [
             {
                 "date": "2025-07-03",
                 "open": "213.50",
@@ -292,7 +293,7 @@ class TestFinancialModelingPrepClient:
     @pytest.mark.asyncio
     async def test_daily_data_with_time(self, client: FinancialModelingPrepClient):
         """Test daily data parsing when response includes time."""
-        daily_response: List[Dict[str, Any]] = [
+        daily_response: list[dict[str, Any]] = [
             {
                 "date": "2025-07-03 16:00:00",
                 "open": "213.50",
@@ -324,7 +325,7 @@ class TestFinancialModelingPrepClient:
     async def test_api_key_in_params(
         self,
         client: FinancialModelingPrepClient,
-        sample_api_response: List[Dict[str, Any]],
+        sample_api_response: list[dict[str, Any]],
     ):
         """Test that API key is added to request parameters."""
         with patch.object(client.client, "get") as mock_get:
@@ -344,7 +345,7 @@ class TestFinancialModelingPrepClient:
     async def test_date_parameters(
         self,
         client: FinancialModelingPrepClient,
-        sample_api_response: List[Dict[str, Any]],
+        sample_api_response: list[dict[str, Any]],
     ):
         """Test that date parameters are correctly formatted."""
         with patch.object(client.client, "get") as mock_get:
@@ -367,7 +368,7 @@ class TestFinancialModelingPrepClient:
     async def test_fetch_latest_data(
         self,
         client: FinancialModelingPrepClient,
-        sample_api_response: List[Dict[str, Any]],
+        sample_api_response: list[dict[str, Any]],
     ):
         """Test fetching latest data."""
         with patch.object(client.client, "get") as mock_get:
@@ -400,7 +401,7 @@ class TestFinancialModelingPrepClient:
     async def test_rate_limiting(
         self,
         client: FinancialModelingPrepClient,
-        sample_api_response: List[Dict[str, Any]],
+        sample_api_response: list[dict[str, Any]],
     ):
         """Test rate limiting functionality."""
         with patch.object(client.client, "get") as mock_get:

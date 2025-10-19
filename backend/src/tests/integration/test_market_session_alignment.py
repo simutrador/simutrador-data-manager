@@ -8,10 +8,10 @@ session boundaries (13:30 UTC market open) for all intraday timeframes.
 import logging
 import sys
 import tempfile
-from datetime import datetime, timezone
+from collections.abc import Generator
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Generator, List
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -67,13 +67,13 @@ class TestMarketSessionAlignment:
     def sample_1min_data(self) -> PriceDataSeries:
         """Create sample 1-minute data covering a full trading day."""
         # Create 1-minute candles from 13:30 to 20:00 UTC (market hours)
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         base_price = Decimal("100.00")
 
         # Generate 390 minutes of data (6.5 hours of trading)
         for minute in range(390):
             timestamp = datetime(
-                2024, 1, 15, 13, 30, tzinfo=timezone.utc
+                2024, 1, 15, 13, 30, tzinfo=UTC
             ) + pd.Timedelta(minutes=minute)
 
             # Simulate some price movement

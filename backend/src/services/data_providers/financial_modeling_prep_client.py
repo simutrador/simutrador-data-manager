@@ -13,7 +13,7 @@ import logging
 from datetime import date, datetime
 from decimal import Decimal
 from types import TracebackType
-from typing import Any, Dict, List, Optional, TypedDict, cast, override
+from typing import Any, TypedDict, cast, override
 
 import httpx
 from pydantic import ValidationError
@@ -88,9 +88,9 @@ class FinancialModelingPrepClient(DataProviderInterface):
     @override
     async def __aexit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Async context manager exit."""
         await self.client.aclose()
@@ -125,7 +125,7 @@ class FinancialModelingPrepClient(DataProviderInterface):
 
     async def _make_request(
         self, endpoint: str, params: dict[str, Any]
-    ) -> List[Dict[str, Any]] | Dict[str, Any]:
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make an authenticated request to the API."""
         await self._enforce_rate_limit()
 
@@ -174,8 +174,8 @@ class FinancialModelingPrepClient(DataProviderInterface):
         self,
         symbol: str,
         timeframe: str = "1min",
-        from_date: Optional[date] = None,
-        to_date: Optional[date] = None,
+        from_date: date | None = None,
+        to_date: date | None = None,
     ) -> PriceDataSeries:
         """
         Fetch historical price data for a symbol.
@@ -205,8 +205,8 @@ class FinancialModelingPrepClient(DataProviderInterface):
         self,
         symbol: str,
         timeframe: str,
-        from_date: Optional[date] = None,
-        to_date: Optional[date] = None,
+        from_date: date | None = None,
+        to_date: date | None = None,
     ) -> PriceDataSeries:
         """Fetch intraday data using historical-chart endpoint."""
         # Map our timeframe format to FMP API format
@@ -285,8 +285,8 @@ class FinancialModelingPrepClient(DataProviderInterface):
     async def _fetch_daily_data(
         self,
         symbol: str,
-        from_date: Optional[date] = None,
-        to_date: Optional[date] = None,
+        from_date: date | None = None,
+        to_date: date | None = None,
     ) -> PriceDataSeries:
         """Fetch daily end-of-day data using historical-price-eod endpoint."""
         endpoint = "historical-price-eod/full"
@@ -366,7 +366,7 @@ class FinancialModelingPrepClient(DataProviderInterface):
     @override
     async def fetch_latest_data(
         self, symbol: str, timeframe: str = "1min"
-    ) -> Optional[PriceCandle]:
+    ) -> PriceCandle | None:
         """
         Fetch the latest price data for a symbol.
 
@@ -392,7 +392,7 @@ class FinancialModelingPrepClient(DataProviderInterface):
         return max(series.candles, key=lambda c: c.date)
 
     @override
-    def get_resampling_metadata(self) -> Dict[str, str]:
+    def get_resampling_metadata(self) -> dict[str, str]:
         """
         Get Financial Modeling Prep specific resampling metadata.
 

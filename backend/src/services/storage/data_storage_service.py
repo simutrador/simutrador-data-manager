@@ -11,7 +11,7 @@ This service handles:
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas as pd
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
@@ -46,7 +46,7 @@ class DataStorageService:
         self.candles_path.mkdir(parents=True, exist_ok=True)
 
     def _get_file_path(
-        self, symbol: str, timeframe: str, date_obj: Optional[date] = None
+        self, symbol: str, timeframe: str, date_obj: date | None = None
     ) -> Path:
         """Get the file path for storing data."""
         if timeframe == Timeframe.DAILY.value:
@@ -57,7 +57,7 @@ class DataStorageService:
             date_str = date_obj.strftime("%Y-%m-%d")
             return self.candles_path / timeframe / symbol / f"{date_str}.parquet"
 
-    def _candles_to_dataframe(self, candles: List[PriceCandle]) -> pd.DataFrame:
+    def _candles_to_dataframe(self, candles: list[PriceCandle]) -> pd.DataFrame:
         """Convert list of PriceCandle objects to DataFrame."""
         if not candles:
             return pd.DataFrame(
@@ -81,7 +81,7 @@ class DataStorageService:
         df = df.sort_values("date").drop_duplicates(subset=["date"], keep="last")
         return df
 
-    def _dataframe_to_candles(self, df: pd.DataFrame) -> List[PriceCandle]:
+    def _dataframe_to_candles(self, df: pd.DataFrame) -> list[PriceCandle]:
         """Convert DataFrame to list of PriceCandle objects."""
         if df.empty:
             return []
@@ -140,7 +140,7 @@ class DataStorageService:
 
             else:
                 # Group intraday candles by date
-                candles_by_date: Dict[date, List[PriceCandle]] = {}
+                candles_by_date: dict[date, list[PriceCandle]] = {}
                 for candle in series.candles:
                     candle_date = candle.date.date()
                     if candle_date not in candles_by_date:
@@ -192,11 +192,11 @@ class DataStorageService:
         self,
         symbol: str,
         timeframe: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
         order_by: str = "desc",
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
+        limit: int | None = None,
+        offset: int | None = None,
     ) -> PriceDataSeries:
         """Load price data from Parquet files."""
         try:
@@ -276,11 +276,11 @@ class DataStorageService:
         symbol: str,
         timeframe: str,
         timeframe_enum: Timeframe,
-        start_date: Optional[date],
-        end_date: Optional[date],
+        start_date: date | None,
+        end_date: date | None,
         order_by: str,
-        limit: Optional[int],
-        offset: Optional[int],
+        limit: int | None,
+        offset: int | None,
     ) -> PriceDataSeries:
         """
         Load intraday data with efficient pagination.
@@ -377,7 +377,7 @@ class DataStorageService:
 
     def _load_all_intraday_files(
         self,
-        file_paths: List[tuple[date, Path]],
+        file_paths: list[tuple[date, Path]],
         symbol: str,
         timeframe_enum: Timeframe,
         order_by: str,
@@ -405,8 +405,8 @@ class DataStorageService:
         self,
         symbol: str,
         timeframe: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
     ) -> int:
         """
         Get total count of records efficiently without loading all data.
@@ -463,7 +463,7 @@ class DataStorageService:
             logger.error(f"Failed to get total count for {symbol} {timeframe}: {e}")
             return 0
 
-    def get_last_update_date(self, symbol: str, timeframe: str) -> Optional[datetime]:
+    def get_last_update_date(self, symbol: str, timeframe: str) -> datetime | None:
         """
         Get the date of the last stored candle for a symbol and timeframe.
 
@@ -513,7 +513,7 @@ class DataStorageService:
             )
             return None
 
-    def list_stored_symbols(self, timeframe: str) -> List[str]:
+    def list_stored_symbols(self, timeframe: str) -> list[str]:
         """List all symbols that have stored data for a given timeframe."""
         try:
             if timeframe == Timeframe.DAILY.value:

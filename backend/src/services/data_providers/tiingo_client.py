@@ -11,7 +11,7 @@ This service handles API calls to Tiingo, including:
 import logging
 from datetime import date
 from types import TracebackType
-from typing import Dict, Optional, override
+from typing import override
 
 import httpx
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
@@ -62,9 +62,9 @@ class TiingoClient(DataProviderInterface):
     @override
     async def __aexit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Async context manager exit."""
         await self.client.aclose()
@@ -74,8 +74,8 @@ class TiingoClient(DataProviderInterface):
         self,
         symbol: str,
         timeframe: str = "1min",
-        from_date: Optional[date] = None,
-        to_date: Optional[date] = None,
+        from_date: date | None = None,
+        to_date: date | None = None,
     ) -> PriceDataSeries:
         """
         Fetch historical price data for a symbol.
@@ -103,7 +103,7 @@ class TiingoClient(DataProviderInterface):
     @override
     async def fetch_latest_data(
         self, symbol: str, timeframe: str = "1min"
-    ) -> Optional[PriceCandle]:
+    ) -> PriceCandle | None:
         """
         Fetch the latest price data for a symbol.
 
@@ -119,7 +119,7 @@ class TiingoClient(DataProviderInterface):
         return None
 
     @override
-    def get_resampling_metadata(self) -> Dict[str, str]:
+    def get_resampling_metadata(self) -> dict[str, str]:
         """
         Get Tiingo specific resampling metadata.
 

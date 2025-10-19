@@ -10,10 +10,10 @@ import json
 import logging
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -93,9 +93,9 @@ class TestCompleteResamplingValidation:
             symbol=self.TEST_SYMBOL, timeframe=Timeframe.ONE_MIN, candles=candles
         )
 
-    def _load_polygon_data(self, file_path: Path) -> List[Dict[str, Any]]:
+    def _load_polygon_data(self, file_path: Path) -> list[dict[str, Any]]:
         """Load Polygon data from JSON file."""
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             data: Any = json.load(f)
 
         # Handle different data formats
@@ -110,20 +110,20 @@ class TestCompleteResamplingValidation:
             return []
 
     def _polygon_to_price_candles(
-        self, polygon_data: List[Dict[str, Any]]
-    ) -> List[PriceCandle]:
+        self, polygon_data: list[dict[str, Any]]
+    ) -> list[PriceCandle]:
         """Convert Polygon JSON data to PriceCandle objects."""
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         for item in polygon_data:
             # Handle different timestamp formats
             if "t" in item:
                 # Polygon API format with millisecond timestamp
-                timestamp = datetime.fromtimestamp(item["t"] / 1000, tz=timezone.utc)
+                timestamp = datetime.fromtimestamp(item["t"] / 1000, tz=UTC)
             elif "date" in item:
                 # Direct format with date string
                 timestamp = datetime.fromisoformat(
                     item["date"].replace(" ", "T")
-                ).replace(tzinfo=timezone.utc)
+                ).replace(tzinfo=UTC)
             else:
                 continue  # Skip invalid entries
 
@@ -152,7 +152,7 @@ class TestCompleteResamplingValidation:
 
     def _load_reference_data(
         self, test_storage_path: Path, timeframe: str
-    ) -> List[PriceCandle]:
+    ) -> list[PriceCandle]:
         """Load reference data for a specific timeframe."""
         # Try both candles directory and direct daily directory
         reference_file = (
@@ -179,10 +179,10 @@ class TestCompleteResamplingValidation:
 
     def _compare_candles(
         self,
-        our_candles: List[PriceCandle],
-        reference_candles: List[PriceCandle],
+        our_candles: list[PriceCandle],
+        reference_candles: list[PriceCandle],
         tolerance: Decimal = Decimal("0.01"),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Compare our resampled candles with reference candles."""
 
         # Create lookup by timestamp
@@ -192,14 +192,14 @@ class TestCompleteResamplingValidation:
         # Find common timestamps
         common_timestamps = set(our_lookup.keys()) & set(ref_lookup.keys())
 
-        missing_timestamps: List[datetime] = list(
+        missing_timestamps: list[datetime] = list(
             set(ref_lookup.keys()) - set(our_lookup.keys())
         )
-        extra_timestamps: List[datetime] = list(
+        extra_timestamps: list[datetime] = list(
             set(our_lookup.keys()) - set(ref_lookup.keys())
         )
 
-        results: Dict[str, Any] = {
+        results: dict[str, Any] = {
             "total_our_candles": len(our_candles),
             "total_reference_candles": len(reference_candles),
             "common_timestamps": len(common_timestamps),
@@ -253,7 +253,7 @@ class TestCompleteResamplingValidation:
         return results
 
     def _log_comparison_results(
-        self, timeframe: str, comparison: Dict[str, Any]
+        self, timeframe: str, comparison: dict[str, Any]
     ) -> None:
         """Log detailed comparison results."""
         logger.info(f"\n{timeframe.upper()} RESAMPLING VALIDATION RESULTS:")
@@ -425,7 +425,7 @@ class TestCompleteResamplingValidation:
         # Store the 1-minute source data
         resampling_service.storage_service.store_data(source_1min_data)
 
-        summary_results: Dict[str, Dict[str, Any]] = {}
+        summary_results: dict[str, dict[str, Any]] = {}
 
         for timeframe_dir, timeframe_param in self.TIMEFRAMES_TO_TEST:
             # Load reference data
@@ -565,9 +565,9 @@ class TestCompleteResamplingValidationBTCEUR:
             symbol=self.TEST_SYMBOL, timeframe=Timeframe.ONE_MIN, candles=candles
         )
 
-    def _load_polygon_data(self, file_path: Path) -> List[Dict[str, Any]]:
+    def _load_polygon_data(self, file_path: Path) -> list[dict[str, Any]]:
         """Load Polygon data from JSON file."""
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             data: Any = json.load(f)
 
         # Handle different data formats
@@ -582,20 +582,20 @@ class TestCompleteResamplingValidationBTCEUR:
             return []
 
     def _polygon_to_price_candles(
-        self, polygon_data: List[Dict[str, Any]]
-    ) -> List[PriceCandle]:
+        self, polygon_data: list[dict[str, Any]]
+    ) -> list[PriceCandle]:
         """Convert Polygon JSON data to PriceCandle objects."""
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         for item in polygon_data:
             # Handle different timestamp formats
             if "t" in item:
                 # Polygon API format with millisecond timestamp
-                timestamp = datetime.fromtimestamp(item["t"] / 1000, tz=timezone.utc)
+                timestamp = datetime.fromtimestamp(item["t"] / 1000, tz=UTC)
             elif "date" in item:
                 # Direct format with date string
                 timestamp = datetime.fromisoformat(
                     item["date"].replace(" ", "T")
-                ).replace(tzinfo=timezone.utc)
+                ).replace(tzinfo=UTC)
             else:
                 continue  # Skip invalid entries
 
@@ -624,7 +624,7 @@ class TestCompleteResamplingValidationBTCEUR:
 
     def _load_reference_data(
         self, test_storage_path: Path, timeframe: str
-    ) -> List[PriceCandle]:
+    ) -> list[PriceCandle]:
         """Load reference data for a specific timeframe."""
         # Try both candles directory and direct daily directory
         reference_file = (
@@ -651,10 +651,10 @@ class TestCompleteResamplingValidationBTCEUR:
 
     def _compare_candles(
         self,
-        our_candles: List[PriceCandle],
-        reference_candles: List[PriceCandle],
+        our_candles: list[PriceCandle],
+        reference_candles: list[PriceCandle],
         tolerance: Decimal = Decimal("0.01"),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Compare our resampled candles with reference candles."""
 
         # Create lookup by timestamp
@@ -664,14 +664,14 @@ class TestCompleteResamplingValidationBTCEUR:
         # Find common timestamps
         common_timestamps = set(our_lookup.keys()) & set(ref_lookup.keys())
 
-        missing_timestamps: List[datetime] = list(
+        missing_timestamps: list[datetime] = list(
             set(ref_lookup.keys()) - set(our_lookup.keys())
         )
-        extra_timestamps: List[datetime] = list(
+        extra_timestamps: list[datetime] = list(
             set(our_lookup.keys()) - set(ref_lookup.keys())
         )
 
-        results: Dict[str, Any] = {
+        results: dict[str, Any] = {
             "total_our_candles": len(our_candles),
             "total_reference_candles": len(reference_candles),
             "common_timestamps": len(common_timestamps),
@@ -725,7 +725,7 @@ class TestCompleteResamplingValidationBTCEUR:
         return results
 
     def _log_comparison_results(
-        self, timeframe: str, comparison: Dict[str, Any]
+        self, timeframe: str, comparison: dict[str, Any]
     ) -> None:
         """Log detailed comparison results."""
         logger.info(f"\n{timeframe.upper()} RESAMPLING VALIDATION RESULTS:")

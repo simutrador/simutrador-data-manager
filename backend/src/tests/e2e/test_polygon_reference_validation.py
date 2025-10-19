@@ -20,10 +20,10 @@ import json
 import logging
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -68,12 +68,12 @@ class TestPolygonReferenceValidation:
         ):
             return DataResamplingService()
 
-    def load_polygon_data(self, file_path: Path) -> List[Dict[str, Any]]:
+    def load_polygon_data(self, file_path: Path) -> list[dict[str, Any]]:
         """Load Polygon data from JSON file."""
         if not file_path.exists():
             pytest.skip(f"Reference data file not found: {file_path}")
 
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             data: Any = json.load(f)
         if isinstance(data, dict):
             results = data.get("results", [])  # type: ignore[reportUnknownMemberType]
@@ -81,13 +81,13 @@ class TestPolygonReferenceValidation:
         return []
 
     def polygon_to_price_candles(
-        self, polygon_data: List[Dict[str, Any]]
-    ) -> List[PriceCandle]:
+        self, polygon_data: list[dict[str, Any]]
+    ) -> list[PriceCandle]:
         """Convert Polygon JSON data to PriceCandle objects."""
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         for item in polygon_data:
             # Convert timestamp from milliseconds to datetime
-            timestamp = datetime.fromtimestamp(item["t"] / 1000, tz=timezone.utc)
+            timestamp = datetime.fromtimestamp(item["t"] / 1000, tz=UTC)
 
             candle = PriceCandle(
                 date=timestamp,
@@ -103,10 +103,10 @@ class TestPolygonReferenceValidation:
 
     def compare_candles(
         self,
-        our_candles: List[PriceCandle],
-        reference_candles: List[PriceCandle],
+        our_candles: list[PriceCandle],
+        reference_candles: list[PriceCandle],
         tolerance: Decimal = Decimal("0.01"),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Compare our resampled candles with reference candles."""
 
         # Create lookup by timestamp
@@ -116,14 +116,14 @@ class TestPolygonReferenceValidation:
         # Find common timestamps
         common_timestamps = set(our_lookup.keys()) & set(ref_lookup.keys())
 
-        missing_timestamps: List[datetime] = list(
+        missing_timestamps: list[datetime] = list(
             set(ref_lookup.keys()) - set(our_lookup.keys())
         )
-        extra_timestamps: List[datetime] = list(
+        extra_timestamps: list[datetime] = list(
             set(our_lookup.keys()) - set(ref_lookup.keys())
         )
 
-        results: Dict[str, Any] = {
+        results: dict[str, Any] = {
             "total_our_candles": len(our_candles),
             "total_reference_candles": len(reference_candles),
             "common_timestamps": len(common_timestamps),

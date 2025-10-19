@@ -8,7 +8,6 @@ This module provides REST API endpoints for:
 """
 
 import logging
-from typing import Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -75,7 +74,7 @@ async def analyze_data_completeness(
             )
 
         # Process the data to create proper object instances
-        completeness_data: Dict[str, SymbolCompletenessData] = {}
+        completeness_data: dict[str, SymbolCompletenessData] = {}
         for symbol, symbol_data_dict in raw_completeness_data.items():
             # Convert dictionary to Pydantic model for type safety
             symbol_data = SymbolCompletenessRawData.from_dict(symbol_data_dict)
@@ -185,7 +184,7 @@ async def analyze_data_completeness(
         ]
 
         # Generate recommendations
-        recommendations: List[str] = []
+        recommendations: list[str] = []
         if symbols_needing_attention:
             recommendations.append(
                 f"{len(symbols_needing_attention)} symbols have less than 95% data completeness"

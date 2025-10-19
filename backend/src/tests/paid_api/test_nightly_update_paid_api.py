@@ -16,7 +16,7 @@ import shutil
 import time
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, cast
+from typing import Any, cast
 
 import pytest
 from fastapi.testclient import TestClient
@@ -59,7 +59,7 @@ class TestNightlyUpdatePaidAPI:
 
     def _wait_for_completion(
         self, client: TestClient, request_id: str, max_wait_seconds: int = 300
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Wait for nightly update to complete and return results."""
         start_time = time.time()
 
@@ -104,7 +104,7 @@ class TestNightlyUpdatePaidAPI:
         """
         print("🚀 Testing nightly update with small symbol list...")
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL", "MSFT", "GOOGL"],  # Small list to minimize costs
             "force_validation": True,
             "max_concurrent": 2,  # Limit concurrency to be gentle on APIs
@@ -280,7 +280,7 @@ class TestNightlyUpdatePaidAPI:
         current_symbol = test_symbols[2]  # GOOGL
         print(f"   ✅ {current_symbol}: Testing up-to-date scenario")
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": test_symbols,
             "force_validation": True,
             "max_concurrent": 2,  # Moderate concurrency
@@ -316,7 +316,7 @@ class TestNightlyUpdatePaidAPI:
         print(f"   Duration: {summary['update_duration_seconds']:.1f} seconds")
 
         # Step 2: Validate each scenario
-        successful_symbols: List[str] = []
+        successful_symbols: list[str] = []
         for symbol in test_symbols:
             result = symbol_results[symbol]
             print(f"\n📈 {symbol} Results:")
@@ -516,7 +516,7 @@ class TestNightlyUpdatePaidAPI:
             candles_path = storage_service.candles_path
 
             # Remove last 2-3 days of 1min data to create a gap
-            recent_dates: List[date] = []
+            recent_dates: list[date] = []
             current_date = date.today() - timedelta(days=1)
             for i in range(3):  # Remove last 3 days
                 check_date = current_date - timedelta(days=i)
@@ -556,7 +556,7 @@ class TestNightlyUpdatePaidAPI:
         """
         print("🚀 Testing nightly update status tracking...")
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL", "MSFT"],  # Small list for quick test
             "force_validation": True,
             "max_concurrent": 1,  # Sequential to make tracking easier
@@ -583,8 +583,8 @@ class TestNightlyUpdatePaidAPI:
         assert isinstance(active_data, list), "Active updates should be a list"
 
         # Should find our request in active list (try a few times in case of timing issues)
-        active_data_typed = cast(List[Dict[str, Any]], active_data)
-        our_request: Dict[str, Any] | None = next(
+        active_data_typed = cast(list[dict[str, Any]], active_data)
+        our_request: dict[str, Any] | None = next(
             (req for req in active_data_typed if req["request_id"] == request_id), None
         )
 
@@ -595,7 +595,7 @@ class TestNightlyUpdatePaidAPI:
             active_response = client.get("/nightly-update/active")
             assert active_response.status_code == 200
             active_data = active_response.json()
-            active_data_typed = cast(List[Dict[str, Any]], active_data)
+            active_data_typed = cast(list[dict[str, Any]], active_data)
             our_request = next(
                 (req for req in active_data_typed if req["request_id"] == request_id),
                 None,
@@ -679,7 +679,7 @@ class TestNightlyUpdatePaidAPI:
         start_date = end_date - timedelta(days=7)
 
         # Test basic completeness analysis
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL", "MSFT", "GOOGL"],
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
@@ -794,14 +794,14 @@ class TestNightlyUpdatePaidAPI:
         for symbol in ["AAPL", "MSFT", "GOOGL"]:
             symbol_data = detailed_data["symbol_completeness"][symbol]
             if symbol_data.get("validation_results"):
-                validation_results: List[Dict[str, Any]] = symbol_data[
+                validation_results: list[dict[str, Any]] = symbol_data[
                     "validation_results"
                 ]
                 assert isinstance(validation_results, list)
 
                 if validation_results:
                     # Check first validation result structure
-                    first_result: Dict[str, Any] = validation_results[0]
+                    first_result: dict[str, Any] = validation_results[0]
                     required_validation_fields = [
                         "symbol",
                         "validation_date",
@@ -845,7 +845,7 @@ class TestNightlyUpdateCompleteEndToEndPipeline:
 
     def _wait_for_completion(
         self, client: TestClient, request_id: str, max_wait_seconds: int = 600
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Wait for nightly update to complete and return results."""
         start_time = time.time()
 
@@ -869,7 +869,7 @@ class TestNightlyUpdateCompleteEndToEndPipeline:
         )
 
     def _validate_storage_structure(
-        self, symbols: List[str], timeframes: List[str], test_dates: List[date]
+        self, symbols: list[str], timeframes: list[str], test_dates: list[date]
     ) -> None:
         """Validate that files are stored in correct directory structure."""
         settings = get_settings()
@@ -937,7 +937,7 @@ class TestNightlyUpdateCompleteEndToEndPipeline:
         # Generate expected test dates (last 3 trading days)
         end_date = date.today() - timedelta(days=1)
         start_date = end_date - timedelta(days=4)
-        test_dates: List[date] = []
+        test_dates: list[date] = []
         current_date = start_date
         while current_date <= end_date:
             if current_date.weekday() < 5:  # Trading days only
@@ -950,7 +950,7 @@ class TestNightlyUpdateCompleteEndToEndPipeline:
         )
 
         # Start nightly update
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": symbols,
             "force_validation": True,
             "max_concurrent": 2,
@@ -1078,7 +1078,7 @@ class TestNightlyUpdateCompleteEndToEndPipeline:
         end_date = date.today() - timedelta(days=2)  # 2 days ago to ensure data exists
         start_date = end_date - timedelta(days=5)  # 5-day range
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL", "MSFT"],  # Small list to minimize costs
             "force_validation": True,
             "max_concurrent": 2,
@@ -1165,7 +1165,7 @@ class TestNightlyUpdateCompleteEndToEndPipeline:
 
         start_date = date.today() - timedelta(days=7)
 
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": ["AAPL"],  # Single symbol to minimize cost
             "force_validation": True,
             "max_concurrent": 1,

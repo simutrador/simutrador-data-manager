@@ -10,10 +10,10 @@ This service handles API calls to Polygon.io, including:
 
 import asyncio
 import logging
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from types import TracebackType
-from typing import Any, Dict, List, Optional, TypedDict, cast, override
+from typing import Any, TypedDict, cast, override
 
 import httpx
 from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
@@ -45,7 +45,7 @@ class PolygonCandle(TypedDict):
 class PolygonResponse(TypedDict):
     """Type definition for Polygon API response."""
 
-    results: List[PolygonCandle]
+    results: list[PolygonCandle]
     status: str
 
 
@@ -59,7 +59,7 @@ class PolygonTrade(TypedDict):
     i: str  # trade ID
     x: int  # exchange ID
     s: int  # size (shares traded)
-    c: List[int]  # conditions
+    c: list[int]  # conditions
     p: float  # price
     z: int  # tape (1=A, 2=B, 3=C)
 
@@ -67,10 +67,10 @@ class PolygonTrade(TypedDict):
 class PolygonTradesResponse(TypedDict):
     """Type definition for Polygon Trades API response."""
 
-    results: List[PolygonTrade]
+    results: list[PolygonTrade]
     status: str
     request_id: str
-    next_url: Optional[str]
+    next_url: str | None
 
 
 class FormattedTrade(TypedDict):
@@ -81,7 +81,7 @@ class FormattedTrade(TypedDict):
     price: float
     size: int
     exchange_id: int
-    conditions: List[int]
+    conditions: list[int]
     trade_id: str
 
 
@@ -100,7 +100,7 @@ class BatchInfo:
         end_date: date,
         success: bool = False,
         candles_count: int = 0,
-        error_message: Optional[str] = None,
+        error_message: str | None = None,
     ):
         self.start_date = start_date
         self.end_date = end_date
@@ -113,11 +113,11 @@ class BatchInfo:
 class FetchResult:
     """Result of fetching historical data with batch tracking."""
 
-    def __init__(self, symbol: str, timeframe: str, candles: List[PriceCandle]):
+    def __init__(self, symbol: str, timeframe: str, candles: list[PriceCandle]):
         self.symbol = symbol
         self.timeframe = timeframe
         self.candles = candles
-        self.batches: List[BatchInfo] = []
+        self.batches: list[BatchInfo] = []
         self.total_batches = 0
         self.successful_batches = 0
         self.failed_batches = 0
@@ -131,11 +131,11 @@ class FetchResult:
         else:
             self.failed_batches += 1
 
-    def get_failed_batches(self) -> List[BatchInfo]:
+    def get_failed_batches(self) -> list[BatchInfo]:
         """Get list of failed batches."""
         return [batch for batch in self.batches if not batch.success]
 
-    def get_missing_date_ranges(self) -> List[tuple[date, date]]:
+    def get_missing_date_ranges(self) -> list[tuple[date, date]]:
         """Get list of date ranges that failed to download."""
         return [
             (batch.start_date, batch.end_date) for batch in self.get_failed_batches()
@@ -173,9 +173,9 @@ class PolygonClient(DataProviderInterface):
     @override
     async def __aexit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Async context manager exit."""
         await self.client.aclose()
@@ -218,7 +218,7 @@ class PolygonClient(DataProviderInterface):
 
             # Check for API-specific errors
             if isinstance(data, dict):
-                data = cast(Dict[str, Any], data)
+                data = cast(dict[str, Any], data)
                 status: str = data.get("status", "")
                 if status == "ERROR":
                     error_msg: str = data.get("error", "Unknown error")
@@ -326,7 +326,7 @@ class PolygonClient(DataProviderInterface):
         batch_start: date,
         batch_end: date,
         max_retries: int = 3,
-    ) -> List[PriceCandle]:
+    ) -> list[PriceCandle]:
         """
         Fetch a single batch of data with retry logic.
 
@@ -368,7 +368,7 @@ class PolygonClient(DataProviderInterface):
         timeframe: str,
         batch_start: date,
         batch_end: date,
-    ) -> List[PriceCandle]:
+    ) -> list[PriceCandle]:
         """
         Fetch a single batch of data for the given date range.
 
@@ -408,13 +408,13 @@ class PolygonClient(DataProviderInterface):
             return []
 
         # Parse and validate candles
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         for item in results:
             candle_data: PolygonCandle = item
             try:
                 # Convert timestamp from milliseconds to datetime
                 timestamp = datetime.fromtimestamp(
-                    candle_data["t"] / 1000, tz=timezone.utc
+                    candle_data["t"] / 1000, tz=UTC
                 )
 
                 candle = PriceCandle(
@@ -437,8 +437,8 @@ class PolygonClient(DataProviderInterface):
         self,
         symbol: str,
         timeframe: str = "1min",
-        from_date: Optional[date] = None,
-        to_date: Optional[date] = None,
+        from_date: date | None = None,
+        to_date: date | None = None,
     ) -> FetchResult:
         """
         Fetch historical price data with detailed batch tracking.
@@ -474,7 +474,7 @@ class PolygonClient(DataProviderInterface):
 
         # Determine if we need batching
         batch_size_days = self._calculate_batch_size(timeframe)
-        all_candles: List[PriceCandle] = []
+        all_candles: list[PriceCandle] = []
         result = FetchResult(symbol, timeframe, all_candles)
 
         if date_range_days <= batch_size_days:
@@ -559,8 +559,8 @@ class PolygonClient(DataProviderInterface):
         self,
         symbol: str,
         timeframe: str = "1min",
-        from_date: Optional[date] = None,
-        to_date: Optional[date] = None,
+        from_date: date | None = None,
+        to_date: date | None = None,
     ) -> PriceDataSeries:
         """
         Fetch historical price data for a symbol with intelligent batching.
@@ -681,7 +681,7 @@ class PolygonClient(DataProviderInterface):
     @override
     async def fetch_latest_data(
         self, symbol: str, timeframe: str = "1min"
-    ) -> Optional[PriceCandle]:
+    ) -> PriceCandle | None:
         """
         Fetch the latest price data for a symbol.
 
@@ -710,7 +710,7 @@ class PolygonClient(DataProviderInterface):
         start_time: datetime,
         end_time: datetime,
         limit: int = 50000,
-    ) -> List[FormattedTrade]:
+    ) -> list[FormattedTrade]:
         """
         Fetch trades data for a symbol within a specific time window.
 
@@ -742,7 +742,7 @@ class PolygonClient(DataProviderInterface):
         )
 
         endpoint = f"v3/trades/{symbol}"
-        params: Dict[str, Any] = {
+        params: dict[str, Any] = {
             "timestamp.gte": start_ns,
             "timestamp.lte": end_ns,
             "limit": min(limit, 50000),  # Respect API limit
@@ -759,11 +759,11 @@ class PolygonClient(DataProviderInterface):
             logger.info(f"Retrieved {len(trades)} trades for {symbol}")
 
             # Convert trades to a more usable format
-            formatted_trades: List[FormattedTrade] = []
+            formatted_trades: list[FormattedTrade] = []
             for trade in trades:
                 # Convert nanosecond timestamp to datetime
                 trade_time = datetime.fromtimestamp(
-                    trade["t"] / 1_000_000_000, tz=timezone.utc
+                    trade["t"] / 1_000_000_000, tz=UTC
                 )
 
                 formatted_trade: FormattedTrade = {
@@ -784,7 +784,7 @@ class PolygonClient(DataProviderInterface):
             raise PolygonError(f"Failed to fetch trades data: {str(e)}")
 
     async def _make_trades_request(
-        self, endpoint: str, params: Dict[str, Any]
+        self, endpoint: str, params: dict[str, Any]
     ) -> PolygonTradesResponse:
         """Make an authenticated request to the trades API."""
         await self._enforce_rate_limit()
@@ -803,7 +803,7 @@ class PolygonClient(DataProviderInterface):
 
             # Check for API-specific errors
             if isinstance(data, dict):
-                data = cast(Dict[str, Any], data)
+                data = cast(dict[str, Any], data)
                 status: str = data.get("status", "")
                 if status == "ERROR":
                     error_msg: str = data.get("error", "Unknown error")
@@ -829,7 +829,7 @@ class PolygonClient(DataProviderInterface):
             raise PolygonError(f"Request failed: {e}")
 
     @override
-    def get_resampling_metadata(self) -> Dict[str, str]:
+    def get_resampling_metadata(self) -> dict[str, str]:
         """
         Get Polygon specific resampling metadata.
 

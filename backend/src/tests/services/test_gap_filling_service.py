@@ -7,7 +7,7 @@ This module tests the gap filling service, including:
 - Integration with Polygon trades API
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -37,8 +37,8 @@ class TestGapFillingService:
         self, gap_filling_service: GapFillingService
     ) -> None:
         """Test trading activity detection when trades are found."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         # Mock trades data
         mock_trades: list[dict[str, Any]] = [
@@ -74,8 +74,8 @@ class TestGapFillingService:
         self, gap_filling_service: GapFillingService
     ) -> None:
         """Test trading activity detection when no trades are found."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         with patch(
             "services.gap_filling_service.DataProviderFactory.create_provider"
@@ -98,8 +98,8 @@ class TestGapFillingService:
         self, gap_filling_service: GapFillingService
     ) -> None:
         """Test trading activity detection error handling."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         with patch(
             "services.gap_filling_service.DataProviderFactory.create_provider"
@@ -122,8 +122,8 @@ class TestGapFillingService:
         self, gap_filling_service: GapFillingService
     ) -> None:
         """Test gap filling when no candles are found but trading activity exists."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         # Mock the HTTP request to return no candles
         mock_response = MagicMock()
@@ -165,8 +165,8 @@ class TestGapFillingService:
         self, gap_filling_service: GapFillingService
     ) -> None:
         """Test gap filling when no candles are found and no trading activity exists."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         # Mock the HTTP request to return no candles
         mock_response = MagicMock()
@@ -208,8 +208,8 @@ class TestGapFillingService:
         self, gap_filling_service: GapFillingService
     ) -> None:
         """Test successful gap filling with candle recovery."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         # Mock the HTTP request to return candles
         mock_response = MagicMock()
@@ -280,8 +280,8 @@ class TestGapFillingService:
         self, gap_filling_service: GapFillingService
     ) -> None:
         """Test gap filling exception handling."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client_class.side_effect = Exception("Network error")
@@ -302,8 +302,8 @@ class TestGapFillingService:
 
     def test_gap_fill_result_model_fields(self) -> None:
         """Test that GapFillResult model has the new fields."""
-        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 14, 30, tzinfo=UTC)
+        end_time = datetime(2024, 1, 1, 15, 30, tzinfo=UTC)
 
         result = GapFillResult(
             start_time=start_time.isoformat(),

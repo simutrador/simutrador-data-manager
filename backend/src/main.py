@@ -28,7 +28,7 @@ configure_third_party_loggers()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):  # noqa: ARG001
     """Handle application lifespan events."""
     # Startup
     logger.info("Trading Simulator API starting up...")

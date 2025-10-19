@@ -9,7 +9,6 @@ This module provides REST API endpoints for:
 
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from simutrador_core.utils import get_default_logger
@@ -38,10 +37,10 @@ logger = get_default_logger("api.nightly_update")
 router = APIRouter(prefix="/nightly-update", tags=["nightly-update"])
 
 # Global storage for completed updates (in production, use Redis or database)
-_completed_updates: Dict[str, NightlyUpdateResponse] = {}
+_completed_updates: dict[str, NightlyUpdateResponse] = {}
 
 # Global singleton instances (in production, use proper dependency injection)
-_progress_service_instance: Optional[NightlyUpdateProgressService] = None
+_progress_service_instance: NightlyUpdateProgressService | None = None
 
 
 def get_nightly_update_service() -> StockMarketNightlyUpdateService:
@@ -68,7 +67,7 @@ def reset_progress_service() -> None:
     _progress_service_instance = None
 
 
-@router.post("/start", response_model=Dict[str, str])
+@router.post("/start", response_model=dict[str, str])
 async def start_nightly_update(
     request: NightlyUpdateRequest,
     background_tasks: BackgroundTasks,
@@ -76,7 +75,7 @@ async def start_nightly_update(
         get_nightly_update_service
     ),
     progress_service: NightlyUpdateProgressService = Depends(get_progress_service),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """
     Start a nightly update process for stock market data.
 
@@ -285,10 +284,10 @@ async def get_update_details(request_id: str) -> NightlyUpdateResponse:
         )
 
 
-@router.get("/active", response_model=List[ActiveUpdateSummary])
+@router.get("/active", response_model=list[ActiveUpdateSummary])
 async def list_active_updates(
     progress_service: NightlyUpdateProgressService = Depends(get_progress_service),
-) -> List[ActiveUpdateSummary]:
+) -> list[ActiveUpdateSummary]:
     """
     List all currently active nightly update requests.
 
@@ -296,7 +295,7 @@ async def list_active_updates(
         List of active update requests with basic information
     """
     try:
-        active_list: List[ActiveUpdateSummary] = []
+        active_list: list[ActiveUpdateSummary] = []
         active_updates = progress_service.get_all_active_updates()
         for request_id, info in active_updates.items():
             active_list.append(

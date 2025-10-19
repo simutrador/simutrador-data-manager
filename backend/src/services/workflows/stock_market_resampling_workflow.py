@@ -7,7 +7,7 @@ ensuring all timeframes are properly generated with correct market session align
 
 import logging
 from datetime import date
-from typing import Any, Dict, List, Optional, override
+from typing import Any, override
 
 from simutrador_core.models.price_data import Timeframe
 
@@ -28,10 +28,10 @@ class ResamplingWorkflowResult:
         self,
         symbol: str,
         source_timeframe: str,
-        target_timeframes: List[str],
+        target_timeframes: list[str],
         success: bool,
-        results: Optional[Dict[str, int]] = None,
-        errors: Optional[Dict[str, str]] = None,
+        results: dict[str, int] | None = None,
+        errors: dict[str, str] | None = None,
     ):
         self.symbol = symbol
         self.source_timeframe = source_timeframe
@@ -46,7 +46,7 @@ class ResamplingWorkflowResult:
         return sum(self.results.values())
 
     @property
-    def successful_timeframes(self) -> List[str]:
+    def successful_timeframes(self) -> list[str]:
         """Get list of timeframes that were successfully resampled."""
         return [
             tf
@@ -55,7 +55,7 @@ class ResamplingWorkflowResult:
         ]
 
     @property
-    def failed_timeframes(self) -> List[str]:
+    def failed_timeframes(self) -> list[str]:
         """Get list of timeframes that failed to resample."""
         return [tf for tf in self.target_timeframes if tf in self.errors]
 
@@ -90,8 +90,8 @@ class StockMarketResamplingWorkflow:
         ]
 
     def get_target_timeframes(
-        self, custom_timeframes: Optional[List[str]] = None
-    ) -> List[str]:
+        self, custom_timeframes: list[str] | None = None
+    ) -> list[str]:
         """
         Get the list of target timeframes for resampling.
 
@@ -103,7 +103,7 @@ class StockMarketResamplingWorkflow:
         """
         if custom_timeframes is not None:
             # Filter and order custom timeframes
-            ordered_timeframes: List[str] = []
+            ordered_timeframes: list[str] = []
             for tf in self.standard_timeframe_order:
                 if tf in custom_timeframes:
                     ordered_timeframes.append(tf)
@@ -121,9 +121,9 @@ class StockMarketResamplingWorkflow:
         self,
         symbol: str,
         source_timeframe: str = "1min",
-        target_timeframes: Optional[List[str]] = None,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        target_timeframes: list[str] | None = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
         stop_on_error: bool = False,
     ) -> ResamplingWorkflowResult:
         """
@@ -148,8 +148,8 @@ class StockMarketResamplingWorkflow:
             f"to {len(target_timeframes)} timeframes"
         )
 
-        results: Dict[str, int] = {}
-        errors: Dict[str, str] = {}
+        results: dict[str, int] = {}
+        errors: dict[str, str] = {}
 
         for target_timeframe in target_timeframes:
             try:
@@ -215,13 +215,13 @@ class StockMarketResamplingWorkflow:
 
     def resample_multiple_symbols_complete_workflow(
         self,
-        symbols: List[str],
+        symbols: list[str],
         source_timeframe: str = "1min",
-        target_timeframes: Optional[List[str]] = None,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        target_timeframes: list[str] | None = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
         stop_on_symbol_error: bool = False,
-    ) -> Dict[str, ResamplingWorkflowResult]:
+    ) -> dict[str, ResamplingWorkflowResult]:
         """
         Execute complete resampling workflow for multiple symbols.
 
@@ -244,7 +244,7 @@ class StockMarketResamplingWorkflow:
             f"to {len(target_timeframes)} timeframes"
         )
 
-        workflow_results: Dict[str, ResamplingWorkflowResult] = {}
+        workflow_results: dict[str, ResamplingWorkflowResult] = {}
 
         for symbol in symbols:
             try:
@@ -300,8 +300,8 @@ class StockMarketResamplingWorkflow:
         return workflow_results
 
     def get_workflow_summary(
-        self, workflow_results: Dict[str, ResamplingWorkflowResult]
-    ) -> Dict[str, Any]:
+        self, workflow_results: dict[str, ResamplingWorkflowResult]
+    ) -> dict[str, Any]:
         """
         Generate a summary of workflow results.
 
@@ -330,7 +330,7 @@ class StockMarketResamplingWorkflow:
         )
 
         # Summarize by timeframe
-        timeframe_summary: Dict[str, int] = {}
+        timeframe_summary: dict[str, int] = {}
         for result in workflow_results.values():
             for timeframe, count in result.results.items():
                 timeframe_summary[timeframe] = (
@@ -338,7 +338,7 @@ class StockMarketResamplingWorkflow:
                 )
 
         # Summarize errors
-        error_summary: Dict[str, List[str]] = {}
+        error_summary: dict[str, list[str]] = {}
         for result in workflow_results.values():
             for timeframe, error in result.errors.items():
                 if timeframe not in error_summary:
@@ -356,10 +356,10 @@ class StockMarketResamplingWorkflow:
 
     def resample_daily_background(
         self,
-        symbols: List[str],
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-    ) -> Dict[str, int]:
+        symbols: list[str],
+        start_date: date | None = None,
+        end_date: date | None = None,
+    ) -> dict[str, int]:
         """
         Background task method to resample 1min data to daily candles.
 

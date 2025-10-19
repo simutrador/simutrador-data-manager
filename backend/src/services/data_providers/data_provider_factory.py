@@ -7,7 +7,6 @@ enabling easy switching between different data vendors and supporting fallback m
 
 import logging
 from enum import Enum
-from typing import Dict, Type
 
 from .data_provider_interface import DataProviderInterface
 
@@ -30,7 +29,7 @@ class DataProviderFactory:
     which helps with startup time and allows for optional dependencies.
     """
 
-    _provider_classes: Dict[DataProvider, str] = {
+    _provider_classes: dict[DataProvider, str] = {
         DataProvider.FINANCIAL_MODELING_PREP: (
             "services.data_providers.financial_modeling_prep_client.FinancialModelingPrepClient"
         ),
@@ -38,7 +37,7 @@ class DataProviderFactory:
         DataProvider.TIINGO: "services.data_providers.tiingo_client.TiingoClient",
     }
 
-    _loaded_classes: Dict[DataProvider, Type[DataProviderInterface]] = {}
+    _loaded_classes: dict[DataProvider, type[DataProviderInterface]] = {}
 
     @classmethod
     def create_provider(cls, provider_type: DataProvider) -> DataProviderInterface:

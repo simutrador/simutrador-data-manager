@@ -182,7 +182,7 @@ class TestTradingDataUpdatingServiceIntegration:
     """Test integration of TradingDataUpdatingService with different providers."""
 
     @patch("services.workflows.trading_data_updating_service.DataStorageService")
-    def test_service_with_financial_modeling_prep(self, mock_storage_service):  # type: ignore
+    def test_service_with_financial_modeling_prep(self, _mock_storage_service):  # type: ignore  # noqa: ARG002
         """Test service initialization with FinancialModelingPrepClient."""
         from services.workflows.trading_data_updating_service import (
             TradingDataUpdatingService,
@@ -196,7 +196,7 @@ class TestTradingDataUpdatingServiceIntegration:
         assert service.storage_service is not None
 
     @patch("services.workflows.trading_data_updating_service.DataStorageService")
-    def test_service_with_polygon(self, mock_storage_service):  # type: ignore
+    def test_service_with_polygon(self, _mock_storage_service):  # type: ignore  # noqa: ARG002
         """Test service initialization with PolygonClient."""
         from services.workflows.trading_data_updating_service import (
             TradingDataUpdatingService,
@@ -208,7 +208,7 @@ class TestTradingDataUpdatingServiceIntegration:
         assert service.storage_service is not None
 
     @patch("services.workflows.trading_data_updating_service.DataStorageService")
-    def test_service_default_provider(self, mock_storage_service):  # type: ignore
+    def test_service_default_provider(self, _mock_storage_service):  # type: ignore  # noqa: ARG002
         """Test service uses default provider when none specified."""
         from services.workflows.trading_data_updating_service import (
             TradingDataUpdatingService,

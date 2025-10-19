@@ -6,7 +6,6 @@ providing centralized storage and calculation of progress information.
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional
 
 from simutrador_core.utils import get_default_logger
 
@@ -21,10 +20,10 @@ class NightlyUpdateProgressService:
     def __init__(self):
         """Initialize the progress tracking service."""
         # In production, these would be stored in Redis or a database
-        self._active_updates: Dict[str, ActiveUpdateInfo] = {}
-        self._progress_tracking: Dict[str, Dict[str, SymbolProgress]] = {}
+        self._active_updates: dict[str, ActiveUpdateInfo] = {}
+        self._progress_tracking: dict[str, dict[str, SymbolProgress]] = {}
 
-    def initialize_progress_tracking(self, request_id: str, symbols: List[str]) -> None:
+    def initialize_progress_tracking(self, request_id: str, symbols: list[str]) -> None:
         """Initialize progress tracking for a request."""
         self._progress_tracking[request_id] = {}
         for symbol in symbols:
@@ -42,7 +41,7 @@ class NightlyUpdateProgressService:
         status: str,
         progress_percentage: float,
         current_step: str,
-        error_message: Optional[str] = None,
+        error_message: str | None = None,
     ) -> None:
         """Update progress for a specific symbol."""
         if (
@@ -122,7 +121,7 @@ class NightlyUpdateProgressService:
             symbols_in_progress=symbols_in_progress,
         )
 
-    def get_symbol_progress(self, request_id: str) -> Dict[str, SymbolProgress]:
+    def get_symbol_progress(self, request_id: str) -> dict[str, SymbolProgress]:
         """Get progress information for all symbols in a request."""
         return self._progress_tracking.get(request_id, {})
 
@@ -136,7 +135,7 @@ class NightlyUpdateProgressService:
         """Store information about an active update."""
         self._active_updates[request_id] = update_info
 
-    def get_active_update(self, request_id: str) -> Optional[ActiveUpdateInfo]:
+    def get_active_update(self, request_id: str) -> ActiveUpdateInfo | None:
         """Get information about an active update."""
         return self._active_updates.get(request_id)
 
@@ -145,7 +144,7 @@ class NightlyUpdateProgressService:
         if request_id in self._active_updates:
             del self._active_updates[request_id]
 
-    def get_all_active_updates(self) -> Dict[str, ActiveUpdateInfo]:
+    def get_all_active_updates(self) -> dict[str, ActiveUpdateInfo]:
         """Get all active updates."""
         return self._active_updates.copy()
 

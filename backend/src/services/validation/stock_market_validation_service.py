@@ -10,8 +10,8 @@ This service handles validation of stock market data including:
 All timestamps are handled in UTC to eliminate timezone conversion issues.
 """
 
-from datetime import date, datetime, time, timedelta, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple
+from datetime import UTC, date, datetime, time, timedelta
+from typing import Any
 
 import pandas as pd
 from typing_extensions import override
@@ -143,10 +143,10 @@ class ValidationResult:
         is_valid: bool,
         expected_candles: int,
         actual_candles: int,
-        missing_periods: Optional[List[Tuple[datetime, datetime]]] = None,
-        polygon_urls_for_missing_periods: Optional[List[str]] = None,
-        errors: Optional[List[str]] = None,
-        warnings: Optional[List[str]] = None,
+        missing_periods: list[tuple[datetime, datetime]] | None = None,
+        polygon_urls_for_missing_periods: list[str] | None = None,
+        errors: list[str] | None = None,
+        warnings: list[str] | None = None,
     ):
         self.symbol = symbol
         self.validation_date = validation_date
@@ -380,9 +380,9 @@ class StockMarketValidationService:
                 actual_candles = len(regular_hours_candles)
             else:
                 actual_candles = len(series.candles)
-            errors: List[str] = []
-            warnings: List[str] = []
-            missing_periods: List[Tuple[datetime, datetime]] = []
+            errors: list[str] = []
+            warnings: list[str] = []
+            missing_periods: list[tuple[datetime, datetime]] = []
 
             # Find missing time periods FIRST (before early returns)
             if self.nightly_settings.enable_market_hours_check:
@@ -466,8 +466,8 @@ class StockMarketValidationService:
             )
 
     def _validate_data_integrity(
-        self, candles: List[PriceCandle]
-    ) -> Tuple[List[str], List[str]]:
+        self, candles: list[PriceCandle]
+    ) -> tuple[list[str], list[str]]:
         """
         Validate the integrity of price candle data.
 
@@ -477,8 +477,8 @@ class StockMarketValidationService:
         Returns:
             Tuple of (errors, warnings)
         """
-        errors: List[str] = []
-        warnings: List[str] = []
+        errors: list[str] = []
+        warnings: list[str] = []
 
         for i, candle in enumerate(candles):
             # Validate OHLC relationships
@@ -509,8 +509,8 @@ class StockMarketValidationService:
         return errors, warnings
 
     def _find_missing_periods(
-        self, candles: List[PriceCandle], validation_date: date
-    ) -> List[Tuple[datetime, datetime]]:
+        self, candles: list[PriceCandle], validation_date: date
+    ) -> list[tuple[datetime, datetime]]:
         """
         Find missing time periods during market hours.
         All times are in UTC to eliminate timezone conversion issues.
@@ -525,7 +525,7 @@ class StockMarketValidationService:
         # Create expected time range for the trading day in UTC
         market_open_utc = datetime.combine(
             validation_date, self.market_open_utc
-        ).replace(tzinfo=timezone.utc)
+        ).replace(tzinfo=UTC)
 
         if self.is_half_trading_day(validation_date):
             # Half day: 3.5 hours (210 minutes) - closes at 17:00 UTC (1:00 PM ET)
@@ -539,26 +539,26 @@ class StockMarketValidationService:
             return [(market_open_utc, market_close_utc)]
 
         # Generate expected timestamps (every minute) in UTC
-        expected_times: Set[datetime] = set()
+        expected_times: set[datetime] = set()
         current_time = market_open_utc
         while current_time < market_close_utc:
             expected_times.add(current_time)
             current_time += timedelta(minutes=1)
 
         # Get actual timestamps from candles, ensuring they're in UTC
-        actual_times: Set[datetime] = set()
+        actual_times: set[datetime] = set()
         for candle in candles:
             candle_time = candle.date.replace(second=0, microsecond=0)
             # Ensure candle time is timezone-aware (assume UTC if naive)
             if candle_time.tzinfo is None:
-                candle_time = candle_time.replace(tzinfo=timezone.utc)
+                candle_time = candle_time.replace(tzinfo=UTC)
             actual_times.add(candle_time)
 
         # Find missing times
-        missing_times: List[datetime] = sorted(expected_times - actual_times)
+        missing_times: list[datetime] = sorted(expected_times - actual_times)
 
         # Group consecutive missing times into periods
-        missing_periods: List[Tuple[datetime, datetime]] = []
+        missing_periods: list[tuple[datetime, datetime]] = []
         if missing_times:
             period_start: datetime = missing_times[0]
             period_end: datetime = missing_times[0]
@@ -581,8 +581,8 @@ class StockMarketValidationService:
         return missing_periods
 
     def _filter_regular_market_hours(
-        self, candles: List[PriceCandle], validation_date: date
-    ) -> List[PriceCandle]:
+        self, candles: list[PriceCandle], validation_date: date
+    ) -> list[PriceCandle]:
         """
         Filter candles to only include regular market hours (13:30 - 20:00 UTC).
 
@@ -603,11 +603,11 @@ class StockMarketValidationService:
         # Create market hours boundaries in UTC
         market_open_utc = datetime.combine(
             validation_date, self.market_open_utc
-        ).replace(tzinfo=timezone.utc)
+        ).replace(tzinfo=UTC)
 
         market_close_utc = datetime.combine(
             validation_date, self.market_close_utc
-        ).replace(tzinfo=timezone.utc)
+        ).replace(tzinfo=UTC)
 
         # Adjust for half trading days
         if self.is_half_trading_day(validation_date):
@@ -615,12 +615,12 @@ class StockMarketValidationService:
             market_close_utc = market_open_utc + timedelta(hours=3, minutes=30)
 
         # Filter candles within market hours
-        regular_hours_candles: List[PriceCandle] = []
+        regular_hours_candles: list[PriceCandle] = []
         for candle in candles:
             # Ensure candle datetime is timezone-aware (assume UTC if naive)
             candle_time = candle.date
             if candle_time.tzinfo is None:
-                candle_time = candle_time.replace(tzinfo=timezone.utc)
+                candle_time = candle_time.replace(tzinfo=UTC)
 
             # Check if candle is within regular market hours
             if market_open_utc <= candle_time < market_close_utc:
@@ -630,7 +630,7 @@ class StockMarketValidationService:
 
     def validate_symbol_data_range(
         self, symbol: str, start_date: date, end_date: date
-    ) -> List[ValidationResult]:
+    ) -> list[ValidationResult]:
         """
         Validate data for a symbol across a date range.
 
@@ -642,7 +642,7 @@ class StockMarketValidationService:
         Returns:
             List of ValidationResult objects for each trading day
         """
-        results: List[ValidationResult] = []
+        results: list[ValidationResult] = []
         current_date = start_date
 
         while current_date <= end_date:
@@ -654,8 +654,8 @@ class StockMarketValidationService:
         return results
 
     def validate_multiple_symbols(
-        self, symbols: List[str], validation_date: date
-    ) -> Dict[str, ValidationResult]:
+        self, symbols: list[str], validation_date: date
+    ) -> dict[str, ValidationResult]:
         """
         Validate data for multiple symbols on a specific date.
 
@@ -666,7 +666,7 @@ class StockMarketValidationService:
         Returns:
             Dictionary mapping symbol to ValidationResult
         """
-        results: Dict[str, ValidationResult] = {}
+        results: dict[str, ValidationResult] = {}
 
         for symbol in symbols:
             try:
@@ -692,8 +692,8 @@ class StockMarketValidationService:
         return results
 
     def get_data_completeness_summary(
-        self, symbols: List[str], start_date: date, end_date: date
-    ) -> Dict[str, Dict[str, Any]]:
+        self, symbols: list[str], start_date: date, end_date: date
+    ) -> dict[str, dict[str, Any]]:
         """
         Get a summary of data completeness for multiple symbols over a date range.
 
@@ -705,7 +705,7 @@ class StockMarketValidationService:
         Returns:
             Dictionary with completeness statistics per symbol
         """
-        summary: Dict[str, Dict[str, Any]] = {}
+        summary: dict[str, dict[str, Any]] = {}
 
         for symbol in symbols:
             validation_results = self.validate_symbol_data_range(
@@ -788,8 +788,8 @@ class StockMarketValidationService:
         return summary
 
     def find_symbols_needing_update(
-        self, symbols: List[str], target_date: Optional[date] = None
-    ) -> List[str]:
+        self, symbols: list[str], target_date: date | None = None
+    ) -> list[str]:
         """
         Find symbols that need data updates based on validation.
 
@@ -806,7 +806,7 @@ class StockMarketValidationService:
             while not self.is_trading_day(target_date):
                 target_date -= timedelta(days=1)
 
-        symbols_needing_update: List[str] = []
+        symbols_needing_update: list[str] = []
 
         for symbol in symbols:
             try:
@@ -823,12 +823,12 @@ class StockMarketValidationService:
 
     async def analyze_completeness_with_gap_filling(
         self,
-        symbols: List[str],
+        symbols: list[str],
         start_date: date,
         end_date: date,
         auto_fill_gaps: bool = False,
         max_gap_fill_attempts: int = 50,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Analyze data completeness with optional automatic gap filling.
 
@@ -872,7 +872,7 @@ class StockMarketValidationService:
                     continue
 
                 # Convert missing periods to datetime tuples
-                missing_periods: List[Tuple[datetime, datetime]] = []
+                missing_periods: list[tuple[datetime, datetime]] = []
                 for start_time, end_time in validation_result.missing_periods:
                     missing_periods.append((start_time, end_time))
 
@@ -930,8 +930,8 @@ class StockMarketValidationService:
         return summary
 
     def _calculate_symbol_summary(
-        self, symbol: str, validation_results: List[ValidationResult]
-    ) -> Dict[str, Any]:
+        self, _symbol: str, validation_results: list[ValidationResult]  # noqa: ARG002
+    ) -> dict[str, Any]:
         """
         Calculate summary statistics for a symbol's validation results.
 

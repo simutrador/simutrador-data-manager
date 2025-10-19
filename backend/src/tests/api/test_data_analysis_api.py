@@ -7,7 +7,7 @@ This module tests the data analysis API including:
 - Error handling
 """
 
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import Mock, patch
 
 import pytest
@@ -32,7 +32,7 @@ class TestDataAnalysisAPI:
             mock_service = Mock()
 
             # Mock completeness data
-            mock_completeness_data: Dict[str, Dict[str, Any]] = {
+            mock_completeness_data: dict[str, dict[str, Any]] = {
                 "AAPL": {
                     "total_trading_days": 5,
                     "valid_days": 5,
@@ -60,7 +60,7 @@ class TestDataAnalysisAPI:
             )
             mock_service_class.return_value = mock_service
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL", "MSFT"],
                 "start_date": "2025-01-13",
                 "end_date": "2025-01-17",
@@ -99,7 +99,7 @@ class TestDataAnalysisAPI:
             mock_service = Mock()
 
             # Mock completeness data with low completeness
-            mock_completeness_data: Dict[str, Dict[str, Any]] = {
+            mock_completeness_data: dict[str, dict[str, Any]] = {
                 "AAPL": {
                     "total_trading_days": 5,
                     "valid_days": 3,
@@ -117,7 +117,7 @@ class TestDataAnalysisAPI:
             )
             mock_service_class.return_value = mock_service
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "start_date": "2025-01-13",
                 "end_date": "2025-01-17",
@@ -145,7 +145,7 @@ class TestDataAnalysisAPI:
             )
             mock_service_class.return_value = mock_service
 
-            request_data: Dict[str, Any] = {
+            request_data: dict[str, Any] = {
                 "symbols": ["AAPL"],
                 "start_date": "2025-01-13",
                 "end_date": "2025-01-17",
@@ -160,7 +160,7 @@ class TestDataAnalysisAPI:
     def test_request_validation(self, client: TestClient) -> None:
         """Test request validation for data analysis endpoints."""
         # Test invalid date format in completeness analysis
-        invalid_request: Dict[str, Any] = {
+        invalid_request: dict[str, Any] = {
             "symbols": ["AAPL"],
             "start_date": "invalid-date",
             "end_date": "2025-01-17",
@@ -172,7 +172,7 @@ class TestDataAnalysisAPI:
 
     def test_empty_symbols_list(self, client: TestClient) -> None:
         """Test handling of empty symbols list."""
-        request_data: Dict[str, Any] = {
+        request_data: dict[str, Any] = {
             "symbols": [],  # Empty list
             "start_date": "2025-01-13",
             "end_date": "2025-01-17",

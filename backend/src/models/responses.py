@@ -3,7 +3,6 @@ Response models for the Trading Simulator API.
 """
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field, computed_field
 from simutrador_core.models.enums import OrderSide, TradeResult
@@ -126,6 +125,6 @@ class ErrorResponse(BaseModel):
 
     error: str = Field(..., description="Error type or category")
     message: str = Field(..., description="Detailed error message")
-    details: Optional[dict[str, str]] = Field(
+    details: dict[str, str] | None = Field(
         None, description="Additional error details"
     )

@@ -9,9 +9,9 @@ This service:
 - Supports flexible timeframe conversions (1min→5min, 5min→1h, etc.)
 """
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas as pd
 from simutrador_core.models.asset_types import AssetType, get_resampling_offset
@@ -58,8 +58,8 @@ class DataResamplingService:
         symbol: str,
         from_timeframe: str,
         to_timeframe: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
     ) -> PriceDataSeries:
         """
         Resample trading data from one timeframe to another.
@@ -139,9 +139,9 @@ class DataResamplingService:
         symbol: str,
         from_timeframe: str,
         to_timeframe: str,
-        provider_metadata: Dict[str, str],
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        provider_metadata: dict[str, str],
+        start_date: date | None = None,
+        end_date: date | None = None,
     ) -> PriceDataSeries:
         """
         Resample data using provider-specific alignment strategy.
@@ -210,8 +210,8 @@ class DataResamplingService:
     def resample_to_daily(
         self,
         symbol: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
         source_timeframe: str = "1min",
     ) -> PriceDataSeries:
         """
@@ -272,7 +272,7 @@ class DataResamplingService:
         except Exception as e:
             raise DataResamplingError(f"Failed to resample {symbol} to daily: {str(e)}")
 
-    def _candles_to_dataframe(self, candles: List[PriceCandle]) -> pd.DataFrame:
+    def _candles_to_dataframe(self, candles: list[PriceCandle]) -> pd.DataFrame:
         """Convert list of PriceCandle objects to pandas DataFrame."""
         if not candles:
             return pd.DataFrame()
@@ -329,8 +329,8 @@ class DataResamplingService:
     def resample_and_store_daily(
         self,
         symbol: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
         source_timeframe: str = "1min",
     ) -> int:
         """
@@ -377,11 +377,11 @@ class DataResamplingService:
 
     def bulk_resample_to_daily(
         self,
-        symbols: List[str],
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        symbols: list[str],
+        start_date: date | None = None,
+        end_date: date | None = None,
         source_timeframe: str = "1min",
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """
         Resample multiple symbols to daily candles.
 
@@ -394,7 +394,7 @@ class DataResamplingService:
         Returns:
             Dictionary mapping symbol to number of daily candles created
         """
-        results: Dict[str, int] = {}
+        results: dict[str, int] = {}
 
         for symbol in symbols:
             try:
@@ -446,7 +446,7 @@ class DataResamplingService:
             source_timeframe=source_timeframe,
         )
 
-    def get_resampling_candidates(self, source_timeframe: str = "1min") -> List[str]:
+    def get_resampling_candidates(self, source_timeframe: str = "1min") -> list[str]:
         """
         Get list of symbols that have source data available for resampling.
 
@@ -557,7 +557,7 @@ class DataResamplingService:
         df: pd.DataFrame,
         to_timeframe: str,
         symbol: str,
-        provider_metadata: Dict[str, str],
+        provider_metadata: dict[str, str],
     ) -> pd.DataFrame:
         """
         Resample DataFrame using provider-specific alignment strategy.
@@ -670,7 +670,7 @@ class DataResamplingService:
 
     def _dataframe_to_candles(
         self, df: pd.DataFrame, timeframe: str
-    ) -> List[PriceCandle]:
+    ) -> list[PriceCandle]:
         """
         Convert pandas DataFrame to list of PriceCandle objects.
 
@@ -698,12 +698,12 @@ class DataResamplingService:
                         # If it's already a datetime, extract the date and set time to 20:00 UTC
                         candle_datetime = datetime.combine(
                             candle_date.date(), datetime.min.time().replace(hour=20)
-                        ).replace(tzinfo=timezone.utc)
+                        ).replace(tzinfo=UTC)
                     else:
                         # If it's a date, convert to datetime at 20:00 UTC
                         candle_datetime = datetime.combine(
                             candle_date, datetime.min.time().replace(hour=20)
-                        ).replace(tzinfo=timezone.utc)
+                        ).replace(tzinfo=UTC)
                 else:
                     # For intraday timeframes, use the timestamp as-is
                     candle_datetime = (
@@ -734,8 +734,8 @@ class DataResamplingService:
         symbol: str,
         from_timeframe: str,
         to_timeframe: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
     ) -> int:
         """
         Resample data and store the result.
@@ -783,12 +783,12 @@ class DataResamplingService:
 
     def bulk_resample(
         self,
-        symbols: List[str],
+        symbols: list[str],
         from_timeframe: str,
         to_timeframe: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-    ) -> Dict[str, int]:
+        start_date: date | None = None,
+        end_date: date | None = None,
+    ) -> dict[str, int]:
         """
         Resample multiple symbols from one timeframe to another.
 
@@ -802,7 +802,7 @@ class DataResamplingService:
         Returns:
             Dictionary mapping symbol to number of candles created
         """
-        results: Dict[str, int] = {}
+        results: dict[str, int] = {}
 
         for symbol in symbols:
             try:

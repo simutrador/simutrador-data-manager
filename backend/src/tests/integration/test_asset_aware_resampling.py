@@ -9,10 +9,10 @@ standard UTC alignment, etc.
 import logging
 import sys
 import tempfile
-from datetime import datetime, timezone
+from collections.abc import Generator
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Generator, List
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -63,14 +63,14 @@ class TestAssetAwareResampling:
         return AssetClassificationService()
 
     @pytest.fixture
-    def sample_24h_data(self) -> List[PriceCandle]:
+    def sample_24h_data(self) -> list[PriceCandle]:
         """Create sample 1-minute data covering 24 hours for crypto testing."""
-        candles: List[PriceCandle] = []
+        candles: list[PriceCandle] = []
         base_price = Decimal("50000.00")  # BTC price
 
         # Generate 24 hours of 1-minute data (1440 minutes)
         for minute in range(1440):
-            timestamp = datetime(2024, 1, 15, 0, 0, tzinfo=timezone.utc) + pd.Timedelta(
+            timestamp = datetime(2024, 1, 15, 0, 0, tzinfo=UTC) + pd.Timedelta(
                 minutes=minute
             )
 
@@ -111,7 +111,7 @@ class TestAssetAwareResampling:
     def test_us_equity_resampling_alignment(
         self,
         resampling_service: DataResamplingService,
-        sample_24h_data: List[PriceCandle],
+        sample_24h_data: list[PriceCandle],
     ) -> None:
         """Test that US equity symbols use market session alignment."""
         symbol = "AAPL"
@@ -154,7 +154,7 @@ class TestAssetAwareResampling:
     def test_crypto_resampling_alignment(
         self,
         resampling_service: DataResamplingService,
-        sample_24h_data: List[PriceCandle],
+        sample_24h_data: list[PriceCandle],
     ) -> None:
         """Test that crypto symbols use standard UTC alignment."""
         symbol = "BTC-USD"
@@ -195,7 +195,7 @@ class TestAssetAwareResampling:
     def test_forex_resampling_alignment(
         self,
         resampling_service: DataResamplingService,
-        sample_24h_data: List[PriceCandle],
+        sample_24h_data: list[PriceCandle],
     ) -> None:
         """Test that forex symbols use appropriate session alignment."""
         symbol = "EURUSD"
@@ -231,7 +231,7 @@ class TestAssetAwareResampling:
     def test_different_timeframes_same_asset(
         self,
         resampling_service: DataResamplingService,
-        sample_24h_data: List[PriceCandle],
+        sample_24h_data: list[PriceCandle],
     ) -> None:
         """Test that different timeframes maintain consistent alignment for same asset type."""
         symbol = "BTC-USD"  # Crypto symbol
@@ -273,7 +273,7 @@ class TestAssetAwareResampling:
     def test_volume_aggregation_by_asset_type(
         self,
         resampling_service: DataResamplingService,
-        sample_24h_data: List[PriceCandle],
+        sample_24h_data: list[PriceCandle],
     ) -> None:
         """Test that volume aggregation works correctly for different asset types."""
         test_symbols = [
@@ -304,7 +304,7 @@ class TestAssetAwareResampling:
             # Find the 5 1-minute candles that should be aggregated into this 5-minute candle
             start_time = first_5min_candle.date
             if start_time.tzinfo is None:
-                start_time = start_time.replace(tzinfo=timezone.utc)
+                start_time = start_time.replace(tzinfo=UTC)
             end_time = start_time + pd.Timedelta(minutes=5)
 
             corresponding_1min_candles = [

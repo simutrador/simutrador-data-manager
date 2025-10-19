@@ -5,6 +5,7 @@ Test script to demonstrate how the system works with Polygon as the default prov
 
 import asyncio
 import logging
+from datetime import UTC
 from unittest.mock import patch
 
 import pytest
@@ -112,7 +113,7 @@ def test_resampling_with_polygon_alignment():
     logger.info("\n=== Testing Resampling with Polygon Alignment ===")
 
     import tempfile
-    from datetime import datetime, timezone
+    from datetime import datetime
     from decimal import Decimal
 
     from simutrador_core.models.price_data import PriceCandle, PriceDataSeries, Timeframe
@@ -138,7 +139,7 @@ def test_resampling_with_polygon_alignment():
         # Create UTC-aligned test data (like Polygon would provide)
         utc_candles = [
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 0, tzinfo=timezone.utc),  # 14:00 UTC
+                date=datetime(2025, 1, 15, 14, 0, tzinfo=UTC),  # 14:00 UTC
                 open=Decimal("100.00"),
                 high=Decimal("101.00"),
                 low=Decimal("99.50"),
@@ -146,7 +147,7 @@ def test_resampling_with_polygon_alignment():
                 volume=Decimal("1000"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 1, tzinfo=timezone.utc),  # 14:01 UTC
+                date=datetime(2025, 1, 15, 14, 1, tzinfo=UTC),  # 14:01 UTC
                 open=Decimal("100.50"),
                 high=Decimal("101.50"),
                 low=Decimal("100.00"),
@@ -154,7 +155,7 @@ def test_resampling_with_polygon_alignment():
                 volume=Decimal("1200"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 2, tzinfo=timezone.utc),  # 14:02 UTC
+                date=datetime(2025, 1, 15, 14, 2, tzinfo=UTC),  # 14:02 UTC
                 open=Decimal("101.00"),
                 high=Decimal("102.00"),
                 low=Decimal("100.50"),
@@ -162,7 +163,7 @@ def test_resampling_with_polygon_alignment():
                 volume=Decimal("800"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 3, tzinfo=timezone.utc),  # 14:03 UTC
+                date=datetime(2025, 1, 15, 14, 3, tzinfo=UTC),  # 14:03 UTC
                 open=Decimal("101.50"),
                 high=Decimal("102.50"),
                 low=Decimal("101.00"),
@@ -170,7 +171,7 @@ def test_resampling_with_polygon_alignment():
                 volume=Decimal("900"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 4, tzinfo=timezone.utc),  # 14:04 UTC
+                date=datetime(2025, 1, 15, 14, 4, tzinfo=UTC),  # 14:04 UTC
                 open=Decimal("102.00"),
                 high=Decimal("103.00"),
                 low=Decimal("101.50"),

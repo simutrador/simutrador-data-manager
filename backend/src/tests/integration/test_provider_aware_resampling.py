@@ -7,7 +7,7 @@ by adjusting expectations based on provider alignment strategies.
 
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
@@ -42,7 +42,7 @@ class TestProviderAwareResampling:
         """Create sample 1-minute data with UTC alignment (like Polygon)."""
         candles = [
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 0, tzinfo=timezone.utc),  # 14:00 UTC
+                date=datetime(2025, 1, 15, 14, 0, tzinfo=UTC),  # 14:00 UTC
                 open=Decimal("100.00"),
                 high=Decimal("101.00"),
                 low=Decimal("99.50"),
@@ -50,7 +50,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("1000"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 1, tzinfo=timezone.utc),  # 14:01 UTC
+                date=datetime(2025, 1, 15, 14, 1, tzinfo=UTC),  # 14:01 UTC
                 open=Decimal("100.50"),
                 high=Decimal("101.50"),
                 low=Decimal("100.00"),
@@ -58,7 +58,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("1200"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 2, tzinfo=timezone.utc),  # 14:02 UTC
+                date=datetime(2025, 1, 15, 14, 2, tzinfo=UTC),  # 14:02 UTC
                 open=Decimal("101.00"),
                 high=Decimal("102.00"),
                 low=Decimal("100.50"),
@@ -66,7 +66,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("800"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 3, tzinfo=timezone.utc),  # 14:03 UTC
+                date=datetime(2025, 1, 15, 14, 3, tzinfo=UTC),  # 14:03 UTC
                 open=Decimal("101.50"),
                 high=Decimal("102.50"),
                 low=Decimal("101.00"),
@@ -74,7 +74,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("900"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 14, 4, tzinfo=timezone.utc),  # 14:04 UTC
+                date=datetime(2025, 1, 15, 14, 4, tzinfo=UTC),  # 14:04 UTC
                 open=Decimal("102.00"),
                 high=Decimal("103.00"),
                 low=Decimal("101.50"),
@@ -92,7 +92,7 @@ class TestProviderAwareResampling:
         """Create sample 1-minute data with session alignment (like FMP)."""
         candles = [
             PriceCandle(
-                date=datetime(2025, 1, 15, 13, 30, tzinfo=timezone.utc),  # Market open
+                date=datetime(2025, 1, 15, 13, 30, tzinfo=UTC),  # Market open
                 open=Decimal("100.00"),
                 high=Decimal("101.00"),
                 low=Decimal("99.50"),
@@ -100,7 +100,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("1000"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 13, 31, tzinfo=timezone.utc),
+                date=datetime(2025, 1, 15, 13, 31, tzinfo=UTC),
                 open=Decimal("100.50"),
                 high=Decimal("101.50"),
                 low=Decimal("100.00"),
@@ -108,7 +108,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("1200"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 13, 32, tzinfo=timezone.utc),
+                date=datetime(2025, 1, 15, 13, 32, tzinfo=UTC),
                 open=Decimal("101.00"),
                 high=Decimal("102.00"),
                 low=Decimal("100.50"),
@@ -116,7 +116,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("800"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 13, 33, tzinfo=timezone.utc),
+                date=datetime(2025, 1, 15, 13, 33, tzinfo=UTC),
                 open=Decimal("101.50"),
                 high=Decimal("102.50"),
                 low=Decimal("101.00"),
@@ -124,7 +124,7 @@ class TestProviderAwareResampling:
                 volume=Decimal("900"),
             ),
             PriceCandle(
-                date=datetime(2025, 1, 15, 13, 34, tzinfo=timezone.utc),
+                date=datetime(2025, 1, 15, 13, 34, tzinfo=UTC),
                 open=Decimal("102.00"),
                 high=Decimal("103.00"),
                 low=Decimal("101.50"),

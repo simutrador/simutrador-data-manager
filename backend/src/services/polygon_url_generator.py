@@ -7,7 +7,6 @@ allowing manual verification of data availability.
 
 import logging
 from datetime import datetime, timedelta
-from typing import List, Tuple
 
 from core.settings import get_settings
 
@@ -22,8 +21,8 @@ class PolygonUrlGenerator:
         self.settings = get_settings()
 
     def generate_urls_for_missing_periods(
-        self, symbol: str, missing_periods: List[Tuple[datetime, datetime]]
-    ) -> List[str]:
+        self, symbol: str, missing_periods: list[tuple[datetime, datetime]]
+    ) -> list[str]:
         """
         Generate Polygon API URLs for a list of missing time periods.
 
@@ -34,7 +33,7 @@ class PolygonUrlGenerator:
         Returns:
             List of Polygon API URLs, one for each missing period
         """
-        urls: List[str] = []
+        urls: list[str] = []
 
         for start_time, end_time in missing_periods:
             url = self.generate_url_for_period(symbol, start_time, end_time)
@@ -171,8 +170,8 @@ class PolygonUrlGenerator:
             return f"Error generating Trades URL: {str(e)}"
 
     def generate_trades_urls_for_missing_periods(
-        self, symbol: str, missing_periods: List[Tuple[datetime, datetime]]
-    ) -> List[str]:
+        self, symbol: str, missing_periods: list[tuple[datetime, datetime]]
+    ) -> list[str]:
         """
         Generate Polygon Trades API URLs for a list of missing time periods.
 
@@ -183,7 +182,7 @@ class PolygonUrlGenerator:
         Returns:
             List of Polygon Trades API URLs, one for each missing period
         """
-        urls: List[str] = []
+        urls: list[str] = []
 
         for start_time, end_time in missing_periods:
             url = self.generate_trades_url_for_period(symbol, start_time, end_time)

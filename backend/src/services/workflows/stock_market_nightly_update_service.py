@@ -10,8 +10,9 @@ This service orchestrates the complete nightly update process for stock market d
 
 import asyncio
 import logging
+from collections.abc import Callable
 from datetime import date, datetime, timedelta
-from typing import Callable, Dict, List, Optional, override
+from typing import override
 
 from simutrador_core.models.price_data import DataUpdateStatus, Timeframe
 
@@ -50,10 +51,10 @@ class NightlyUpdateResult:
         start_date: date,
         end_date: date,
         success: bool,
-        validation_results: Optional[List[ValidationResult]] = None,
-        update_statuses: Optional[List[DataUpdateStatus]] = None,
-        resampling_results: Optional[Dict[str, int]] = None,
-        error_message: Optional[str] = None,
+        validation_results: list[ValidationResult] | None = None,
+        update_statuses: list[DataUpdateStatus] | None = None,
+        resampling_results: dict[str, int] | None = None,
+        error_message: str | None = None,
     ):
         self.symbol = symbol
         self.start_date = start_date
@@ -101,7 +102,7 @@ class StockMarketNightlyUpdateService:
         self.resampling_workflow = StockMarketResamplingWorkflow()
         self.storage_service = DataStorageService()
 
-    def get_default_symbols(self) -> List[str]:
+    def get_default_symbols(self) -> list[str]:
         """
         Get the default list of symbols for nightly updates.
 
@@ -116,8 +117,8 @@ class StockMarketNightlyUpdateService:
     def get_update_date_range(
         self,
         symbol: str,
-        custom_start_date: Optional[date] = None,
-        custom_end_date: Optional[date] = None,
+        custom_start_date: date | None = None,
+        custom_end_date: date | None = None,
     ) -> tuple[date, date]:
         """
         Determine the date range that needs updating for a symbol.
@@ -289,8 +290,8 @@ class StockMarketNightlyUpdateService:
             )
 
     async def update_multiple_symbols(
-        self, symbols: Optional[List[str]] = None, max_concurrent: Optional[int] = None
-    ) -> Dict[str, NightlyUpdateResult]:
+        self, symbols: list[str] | None = None, max_concurrent: int | None = None
+    ) -> dict[str, NightlyUpdateResult]:
         """
         Update data for multiple symbols concurrently.
 
@@ -325,7 +326,7 @@ class StockMarketNightlyUpdateService:
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Process results
-        update_results: Dict[str, NightlyUpdateResult] = {}
+        update_results: dict[str, NightlyUpdateResult] = {}
         for result in results:
             if isinstance(result, Exception):
                 logger.error(f"Unexpected error during nightly update: {result}")
@@ -359,17 +360,15 @@ class StockMarketNightlyUpdateService:
 
     async def update_multiple_symbols_with_progress(
         self,
-        symbols: Optional[List[str]] = None,
-        max_concurrent: Optional[int] = None,
-        progress_callback: Optional[
-            Callable[[str, str, float, str, Optional[str]], None]
-        ] = None,
-        request_id: Optional[str] = None,
-        custom_start_date: Optional[date] = None,
-        custom_end_date: Optional[date] = None,
+        symbols: list[str] | None = None,
+        max_concurrent: int | None = None,
+        progress_callback: Callable[[str, str, float, str, str | None], None] | None = None,
+        request_id: str | None = None,
+        custom_start_date: date | None = None,
+        custom_end_date: date | None = None,
         force_validation: bool = True,
         enable_resampling: bool = True,
-    ) -> Dict[str, NightlyUpdateResult]:
+    ) -> dict[str, NightlyUpdateResult]:
         """
         Update data for multiple symbols concurrently with progress tracking.
 
@@ -562,7 +561,7 @@ class StockMarketNightlyUpdateService:
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Process results
-        update_results: Dict[str, NightlyUpdateResult] = {}
+        update_results: dict[str, NightlyUpdateResult] = {}
         for result in results:
             if isinstance(result, Exception):
                 logger.error(f"Unexpected error during nightly update: {result}")
@@ -599,7 +598,7 @@ class StockMarketNightlyUpdateService:
         request_id: str,
         request: NightlyUpdateRequest,
         progress_service: NightlyUpdateProgressService,
-        completed_updates_storage: Dict[str, NightlyUpdateResponse],
+        completed_updates_storage: dict[str, NightlyUpdateResponse],
     ) -> None:
         """
         Execute the nightly update process in the background.
@@ -630,7 +629,7 @@ class StockMarketNightlyUpdateService:
                 status: str,
                 progress_percentage: float,
                 current_step: str,
-                error_message: Optional[str],
+                error_message: str | None,
             ) -> None:
                 progress_service.update_symbol_progress(
                     request_id,
@@ -656,10 +655,10 @@ class StockMarketNightlyUpdateService:
             duration = (end_time - start_time).total_seconds()
 
             # Convert results to API models
-            symbol_results: Dict[str, SymbolUpdateResult] = {}
+            symbol_results: dict[str, SymbolUpdateResult] = {}
             for symbol, result in results.items():
                 # Convert validation results
-                validation_models: List[ValidationResultModel] = []
+                validation_models: list[ValidationResultModel] = []
                 for val_result in result.validation_results:
                     validation_models.append(
                         ValidationResultModel(
@@ -707,7 +706,7 @@ class StockMarketNightlyUpdateService:
             total_resampled = sum(r.total_resampled_candles for r in results.values())
 
             # Calculate resampling summary
-            resampling_summary: Dict[str, int] = {}
+            resampling_summary: dict[str, int] = {}
             for result in results.values():
                 for timeframe, count in result.resampling_results.items():
                     resampling_summary[timeframe] = (

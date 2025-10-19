@@ -3,10 +3,10 @@ Sample Polygon data for testing resampling logic.
 This eliminates the need for manual reference data files.
 """
 
-from typing import Any, Dict, List
+from typing import Any
 
 # Sample 1-minute data for testing (represents 1 hour of trading)
-SAMPLE_1MIN_DATA: List[Dict[str, Any]] = [
+SAMPLE_1MIN_DATA: list[dict[str, Any]] = [
     # 9:30 AM
     {"t": 1642086600000, "o": 100.0, "h": 101.0, "l": 99.5, "c": 100.5, "v": 1000},
     # 9:31 AM
@@ -34,7 +34,7 @@ SAMPLE_1MIN_DATA: List[Dict[str, Any]] = [
 ]
 
 # Expected 5-minute resampled data (calculated from above 1-min data)
-EXPECTED_5MIN_DATA: List[Dict[str, Any]] = [
+EXPECTED_5MIN_DATA: list[dict[str, Any]] = [
     # 9:30-9:35 (first 6 candles)
     {
         "t": 1642086600000,  # 9:30 timestamp
@@ -65,7 +65,7 @@ EXPECTED_5MIN_DATA: List[Dict[str, Any]] = [
 ]
 
 # Expected 15-minute resampled data (calculated from 1-min data)
-EXPECTED_15MIN_DATA: List[Dict[str, Any]] = [
+EXPECTED_15MIN_DATA: list[dict[str, Any]] = [
     # 9:30-9:45 (all 16 candles combined)
     {
         "t": 1642086600000,  # 9:30 timestamp

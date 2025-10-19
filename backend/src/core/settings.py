@@ -1,7 +1,6 @@
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import List
 
 from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -74,7 +73,7 @@ class TradingDataProviderSettings(BaseModel):
         default="polygon",
         description="Default data provider to use",
     )
-    fallback_providers: List[str] = Field(
+    fallback_providers: list[str] = Field(
         default=["financial_modeling_prep", "tiingo"],
         description="Fallback providers if primary fails",
     )
@@ -119,7 +118,7 @@ class NightlyUpdateSettings(BaseModel):
     """Nightly update configuration for stock market data."""
 
     # US Equity symbol lists for different market caps
-    large_cap_symbols: List[str] = Field(
+    large_cap_symbols: list[str] = Field(
         default=[
             "AAPL",
             "MSFT",
@@ -176,7 +175,7 @@ class NightlyUpdateSettings(BaseModel):
         description="Large cap US equity symbols for nightly updates",
     )
 
-    mid_cap_symbols: List[str] = Field(
+    mid_cap_symbols: list[str] = Field(
         default=[
             "ROKU",
             "SNAP",
@@ -253,7 +252,7 @@ class NightlyUpdateSettings(BaseModel):
     )
 
     # Resampling timeframes
-    target_timeframes: List[str] = Field(
+    target_timeframes: list[str] = Field(
         default=["5min", "15min", "30min", "1h", "2h", "4h", "daily"],
         description="Target timeframes for resampling after 1min data update",
     )

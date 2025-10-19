@@ -6,7 +6,6 @@ corresponding market characteristics for proper resampling alignment.
 """
 
 import re
-from typing import Dict, List
 
 from simutrador_core.models.asset_types import AssetType
 from simutrador_core.utils import get_default_logger
@@ -250,7 +249,7 @@ class AssetClassificationService:
 
         return base
 
-    def classify_symbols(self, symbols: List[str]) -> Dict[str, AssetType]:
+    def classify_symbols(self, symbols: list[str]) -> dict[str, AssetType]:
         """
         Classify multiple symbols at once.
 
@@ -263,8 +262,8 @@ class AssetClassificationService:
         return {symbol: self.classify_symbol(symbol) for symbol in symbols}
 
     def get_symbols_by_type(
-        self, symbols: List[str], asset_type: AssetType
-    ) -> List[str]:
+        self, symbols: list[str], asset_type: AssetType
+    ) -> list[str]:
         """
         Filter symbols by asset type.
 
@@ -303,7 +302,7 @@ class AssetClassificationService:
 
         logger.info(f"Added custom mapping: {symbol} -> {asset_type}")
 
-    def get_classification_stats(self, symbols: List[str]) -> Dict[AssetType, int]:
+    def get_classification_stats(self, symbols: list[str]) -> dict[AssetType, int]:
         """
         Get statistics on asset type distribution for a list of symbols.
 
@@ -314,7 +313,7 @@ class AssetClassificationService:
             Dictionary with counts for each asset type
         """
         classifications = self.classify_symbols(symbols)
-        stats: Dict[AssetType, int] = {}
+        stats: dict[AssetType, int] = {}
 
         for asset_type in AssetType:
             count = sum(1 for t in classifications.values() if t == asset_type)
