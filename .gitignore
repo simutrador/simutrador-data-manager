@@ -4,3 +4,4 @@ backend/.vscode/*
 backend/src/logs/*
 backend/logs/*
 .augment/rules/rules.md
+backend/storage/*
