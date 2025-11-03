@@ -15,7 +15,7 @@ dependencies = [
     "pytest>=8.4.1",
     "pytest-asyncio>=1.0.0",
     "requests>=2.32.4",
-    "simutrador-core==1.0.5",
+  "simutrador-core>=1.0.18",
 ]
 
 [dependency-groups]
