@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13"
 
 [[package]]
@@ -664,15 +664,16 @@ wheels = [
 
 [[package]]
 name = "simutrador-core"
-version = "1.0.5"
+version = "1.0.18"
 source = { registry = "https://test.pypi.org/simple/" }
 dependencies = [
     { name = "pandas" },
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
+sdist = { url = "https://test-files.pythonhosted.org/packages/dd/5f/63df93238a7d9507bc188a0af56fdac6af962b120e6caab33314b3581020/simutrador_core-1.0.18.tar.gz", hash = "sha256:6ca506401494ec79bd0ca3e736c8b6468b2b3812da8404ed9bd8800c69887d41", size = 15997, upload-time = "2025-10-31T16:36:52.404Z" }
 wheels = [
-    { url = "https://test-files.pythonhosted.org/packages/3c/da/eb407d8111c2a6e1d1aa42d5ea078d8143c2ff84b578a8ad342feaf1e7a9/simutrador_core-1.0.5-py3-none-any.whl", hash = "sha256:db98d557808512d23e9c4a9501033cc0d7beede84a69bd38fdad3491e3de5afb", size = 16921, upload-time = "2025-08-19T18:45:49.187Z" },
+    { url = "https://test-files.pythonhosted.org/packages/69/cd/79db4a7ece97bf91486584bf63d2e46fe57605ad3175cbde200aa9d90a36/simutrador_core-1.0.18-py3-none-any.whl", hash = "sha256:c88604ff965f792842cc75fe86b9a9ce539e29e31725ffa2141ce3879d66e749", size = 18225, upload-time = "2025-10-31T16:36:50.831Z" },
 ]
 
 [[package]]
@@ -711,7 +712,7 @@ requires-dist = [
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-asyncio", specifier = ">=1.0.0" },
     { name = "requests", specifier = ">=2.32.4" },
-    { name = "simutrador-core", specifier = "==1.0.5", index = "https://test.pypi.org/simple/" },
+    { name = "simutrador-core", specifier = ">=1.0.18", index = "https://test.pypi.org/simple/" },
 ]
 
 [package.metadata.requires-dev]
