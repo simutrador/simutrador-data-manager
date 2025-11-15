@@ -1,43 +1,26 @@
 {
   "version": "0.2.0",
   "configurations": [
-      {
-        "name": "Data Manager - Backend (Uvicorn)",
-        "type": "debugpy",
-        "python": "${workspaceFolder}/backend/.venv/bin/python",
-        "request": "launch",
-        "module": "uvicorn",
-        "args": ["main:app", "--reload", "--host", "127.0.0.1", "--port", "8002"],
-        "cwd": "${workspaceFolder}/backend/src",
-        "console": "integratedTerminal",
-        "justMyCode": true,
-        "subProcess": true,
-        "env": {
-          "PYTHONPATH": "${workspaceFolder}/backend/src",
-          "PYTHONUNBUFFERED": "1"
-        }
-      },
-      {
-        "name": "Data Manager - Backend (Uvicorn, robust)",
-        "type": "debugpy",
-        "python": "${workspaceFolder}/backend/.venv/bin/python",
-        "request": "launch",
-        "module": "uvicorn",
-        "args": ["--app-dir", "${workspaceFolder}/backend/src", "main:app", "--reload", "--host", "127.0.0.1", "--port", "8002"],
-        "console": "integratedTerminal",
-        "justMyCode": true,
-        "subProcess": true
-      },
-      {
-        "name": "Data Manager - Backend (Uvicorn, no-reload)",
-        "type": "debugpy",
-        "python": "${workspaceFolder}/backend/.venv/bin/python",
-        "request": "launch",
-        "module": "uvicorn",
-        "args": ["--app-dir", "${workspaceFolder}/backend/src", "main:app", "--host", "127.0.0.1", "--port", "8002"],
-        "console": "integratedTerminal",
-        "justMyCode": true
-      },
+    {
+      "name": "Data Manager - Backend (Uvicorn, robust)",
+      "type": "debugpy",
+      "python": "${workspaceFolder}/backend/.venv/bin/python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "--app-dir",
+        "${workspaceFolder}/backend/src",
+        "main:app",
+        "--reload",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8002"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "subProcess": true
+    },
     {
       "name": "Data Manager - Frontend (Angular serve)",
       "type": "node",
@@ -55,18 +38,14 @@
       "cwd": "${workspaceFolder}/frontend",
       "console": "integratedTerminal"
     },
-    {
-      "name": "Frontend (Chrome)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/frontend"
-    }
   ],
   "compounds": [
-   {
-  "name": "Run Frontend + Backend",
-  "configurations": ["Data Manager - Backend (Uvicorn)", "Data Manager - Frontend (Angular serve)", "Frontend (Chrome)"]
-}
+    {
+      "name": "DataManager Frontend + Backend",
+      "configurations": [
+        "Data Manager - Backend (Uvicorn, robust)",
+        "Data Manager - Frontend (Angular serve)"
+      ]
+    }
   ]
 }
